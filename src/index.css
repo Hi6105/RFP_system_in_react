@@ -1,9 +1,15 @@
 body {
   margin: 0;
   padding: 0;
+  background-color: #e3edfa;
   font-family: Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+*{
+  margin: 0;
+  padding: 0;
 }
 
 code {
@@ -13,4 +19,8 @@ code {
 p{
   margin: 0;
   padding: 0;
+}
+
+.login-form-button {
+  width: 100%;
 }

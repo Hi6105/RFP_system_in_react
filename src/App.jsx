@@ -1,24 +1,25 @@
 import React from "react";
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  Navigate,
-  useLocation,
-} from "react-router-dom";
-import LoginPage from "./pages/loginPage";
-import VendorSignupPage from "./pages/signupPage/vendorSignupPage";
+import { ConfigProvider } from "antd";
+import Navigation from "./navigator";
 
 const App = () => {
   return (
-    <div>
-      <BrowserRouter basename="/">
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/VendorSignup" element={<VendorSignupPage />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    // This wrapper provides all the theme configuration for the app
+    <ConfigProvider
+      theme={{
+        token: {
+          // Seed Token
+          colorPrimary: "#4096ff",
+          borderRadius: 10,
+
+          // Alias Token
+          colorBgContainer: "#f6ffed",
+        },
+      }}
+    >
+      {/*This component defines all the route for the application*/}
+      <Navigation />
+    </ConfigProvider>
   );
 };
 
