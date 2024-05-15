@@ -7,6 +7,7 @@ export const API_RESPONSE_TYPE = {
 // Validation messages related constants
 export const VALIDATION = {
   required: "This field is required",
+  numeric : "Please enter a valid numeric value!",
   firstname: "Please input your First name!",
   lastname: "Please input your Last name!",
   email: {
@@ -49,7 +50,8 @@ export const MESSAGE = {
       success : "Vendor registered successfully",
       error : "error"
     },
-    wentWrong : "Something went wrong."
+    wentWrong : "Something went wrong.",
+    categorySaved : "Category saved successfully",
 };
 
 // User Type Constants
@@ -57,3 +59,13 @@ export const USER_TYPE = {
   ADMIN: "admin",
   VENDOR: "vendor",
 };
+
+// Regular Expressions for patter matching and validation
+
+export const REGEX = {
+  revenue : /^\d+(,\d+){2,}$/,
+  number : /^(?!0\d)\d*$/,
+  gstNo : /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+  panNo : /[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+  phoneNo : /^\d{10}$/,
+}

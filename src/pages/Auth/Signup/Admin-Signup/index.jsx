@@ -50,6 +50,9 @@ const AdminSignup = () => {
               backgroundColor: "#c1d8f7",
               padding: "4%",
               borderRadius: "10px 10px 0 0",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
             }}
           >
             <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>

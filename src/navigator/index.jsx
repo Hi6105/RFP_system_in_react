@@ -18,6 +18,12 @@ const Navigation = () => {
   );
   const AdminCategories = lazy(() => import("../pages/Admin/categories"));
   const ForgotPassword = lazy(() => import("../pages/Auth/Forgot-Password"));
+  const AddCategory = lazy(() =>
+    import("../pages/Admin/categories/AddCategory")
+  );
+  const RfpList = lazy(() => import("../pages/Admin/RFP-List"));
+  const AddRfp = lazy(() => import("../pages/Admin/RFP-List/AddRfp"));
+  const VendorList = lazy(() => import("../pages/Admin/Vendor-List"));
 
   //Authentication routes
   const authRoutes = {
@@ -93,6 +99,38 @@ const Navigation = () => {
         element: (
           <Suspense fallback={"loading"}>
             <AdminCategories />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${APP_ROUTES.addCategory}`,
+        element: (
+          <Suspense fallback={"loading"}>
+            <AddCategory />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${APP_ROUTES.rfpList}`,
+        element: (
+          <Suspense fallback={"loading"}>
+            <RfpList />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${APP_ROUTES?.addRfp}`,
+        element: (
+          <Suspense fallback={"loading"}>
+            <AddRfp />
+          </Suspense>
+        ),
+      },
+      {
+        path: `${APP_ROUTES?.vendorList}`,
+        element: (
+          <Suspense fallback={"loading"}>
+            <VendorList />
           </Suspense>
         ),
       },

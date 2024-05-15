@@ -11,12 +11,12 @@ const items = [
     label: "Dashboard",
   },
   {
-    key: String(2),
+    key: APP_ROUTES?.vendorList,
     icon: React.createElement(UserOutlined),
     label: "Vendors",
   },
   {
-    key: String(3),
+    key: APP_ROUTES?.rfpList,
     icon: React.createElement(UserOutlined),
     label: "RFP List",
   },

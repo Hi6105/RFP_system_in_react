@@ -4,14 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import "./loginPage.css";
-import axios from "axios";
 import { error } from "../../../helper/ToastMessages";
-import {
-  API_BASE_URL,
-  API_ENDPOINTS,
-  APP_ROUTES,
-} from "../../../config/AppConfig";
+import { APP_ROUTES } from "../../../config/AppConfig";
 import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../constants";
+import AuthServices from "../../../api/services/AuthServices";
 
 const Login = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -19,31 +15,22 @@ const Login = () => {
 
   // Function to authenticate a user through his login credentials
   const onFinish = async (values) => {
-    try {
-      // Making a POST request to the login api for checking the credentials
-      const response = await axios.post(
-        `${API_BASE_URL}/${API_ENDPOINTS.login}`,
-        values // This will send the form values as the request body
-      );
-      if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
-        // Saving token and user data to local storage
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", {
-          type: response?.data?.type,
-          user_id: response?.data?.user_id,
-          name: response?.data?.name,
-          email: response?.data?.email,
-        });
-        // Navigate to admin dashboard route
-        navigate(APP_ROUTES?.adminDashboard);
-      } else {
-        //Showing toast message if credentials entered are wrong.
-        error(MESSAGE?.wrongCredentials, messageApi);
-      }
-      // Handle the API response as needed
-    } catch (error) {
-      console.error("API Error:", error);
-      // Handle errors if any
+    // Calling the login API service for authentication
+    const response = await AuthServices.login(values);
+    if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
+      // Saving token and user data to local storage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", {
+        type: response?.data?.type,
+        user_id: response?.data?.user_id,
+        name: response?.data?.name,
+        email: response?.data?.email,
+      });
+      // Navigate to admin dashboard route
+      navigate(APP_ROUTES?.adminDashboard);
+    } else {
+      //Showing toast message if credentials entered are wrong.
+      error(MESSAGE?.wrongCredentials, messageApi);
     }
   };
 
@@ -67,6 +54,9 @@ const Login = () => {
               backgroundColor: "#c1d8f7",
               padding: "4%",
               borderRadius: "10px 10px 0 0",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
             }}
           >
             <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>

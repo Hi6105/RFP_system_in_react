@@ -1,10 +1,16 @@
 import { Flex } from "antd";
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, message, Select } from "antd";
-import axios from "axios";
 import { success, error } from "../../../../helper/ToastMessages";
-import { API_BASE_URL, API_ENDPOINTS } from "../../../../config/AppConfig";
-import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../../constants";
+import {
+  API_RESPONSE_TYPE,
+  MESSAGE,
+  REGEX,
+  VALIDATION,
+} from "../../../../constants";
+import AuthServices from "../../../../api/services/AuthServices";
+import CategoryServices from "../../../../api/services/CategoryServices";
+import { fetchCategories } from "../../../../helper/Fetchdata";
 
 // Form item layout settings
 const formItemLayout = {
@@ -24,33 +30,6 @@ const formItemLayout = {
       span: 16,
     },
   },
-};
-
-// Function to fetch all the categories
-const fetchCategories = async () => {
-  try {
-    // Making a request to the categories API endpoint
-    const response = await axios.get(
-      `${API_BASE_URL}/${API_ENDPOINTS.categories}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-
-    // Returning data of categories on success response
-    if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
-      return response?.data?.categories;
-    }
-    // Handle the API response as needed
-  } catch (error) {
-    console.error("API Error:", error);
-    // Returning empty array if some error occurs from backend.
-    return [];
-  }
-  // Returning empty array if some error occurs from backend.
-  return [];
 };
 
 const VendorSignup = () => {
@@ -84,23 +63,13 @@ const VendorSignup = () => {
       category: values?.category,
     };
 
-    //Making the registration API call for vendor
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/${API_ENDPOINTS.registerVendor}`,
-        data // This will send the form values as the request body
-      );
+    // Calling the auth seyyy
+    const response = await AuthServices.signUp(data);
 
-      //Displaying toast message on successful registration
-      if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
-        success(MESSAGE?.vendorRegistration?.success, messageApi);
-      } else {
-        error(response?.data?.response, messageApi);
-      }
-      // Handle the API response as needed
-    } catch (error) {
-      console.error("API Error:", error);
-      // Handle errors if any
+    if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
+      success(MESSAGE?.vendorRegistration?.success, messageApi);
+    } else {
+      error(response?.data?.response, messageApi);
     }
   };
 
@@ -125,6 +94,9 @@ const VendorSignup = () => {
               backgroundColor: "#c1d8f7",
               padding: "4%",
               borderRadius: "10px 10px 0 0",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
             }}
           >
             <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
@@ -236,7 +208,7 @@ const VendorSignup = () => {
                     message: VALIDATION?.revenue?.required,
                   },
                   {
-                    pattern: /^\d+(,\d+){2,}$/,
+                    pattern: REGEX?.revenue,
                     message: VALIDATION?.revenue?.match,
                   },
                 ]}
@@ -253,7 +225,7 @@ const VendorSignup = () => {
                     message: VALIDATION?.noofemployees?.required,
                   },
                   {
-                    pattern: /^(?!0\d)\d*$/,
+                    pattern: REGEX?.number,
                     message: VALIDATION?.noofemployees?.match,
                   },
                 ]}
@@ -270,8 +242,7 @@ const VendorSignup = () => {
                     message: VALIDATION?.gstno?.required,
                   },
                   {
-                    pattern:
-                      /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                    pattern: REGEX?.gstNo,
                     message: VALIDATION?.gstno?.match,
                   },
                 ]}
@@ -288,7 +259,7 @@ const VendorSignup = () => {
                     message: VALIDATION?.panno?.required,
                   },
                   {
-                    pattern: /[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+                    pattern: REGEX.panNo,
                     message: VALIDATION?.panno?.match,
                   },
                 ]}
@@ -305,7 +276,7 @@ const VendorSignup = () => {
                     message: VALIDATION?.phone?.required,
                   },
                   {
-                    pattern: /^\d{10}$/,
+                    pattern: REGEX?.phoneNo,
                     message: VALIDATION?.phone?.match,
                   },
                 ]}

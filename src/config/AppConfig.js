@@ -6,6 +6,8 @@ export const API_ENDPOINTS = {
     categories : "categories",
     registerVendor : "registervendor",
     forgotPassword : "forgetPassword",
+    getRfps : "rfp/all",
+    getVendors : "vendorlist",
 };
 
 export const APP_ROUTES = {
@@ -16,4 +18,8 @@ export const APP_ROUTES = {
     adminDashboard : "/admin/dashboard",
     adminCategories : "/admin/categories",
     forgortPassword : "/forgotPassword",
+    addCategory : "/admin/addCategory",
+    rfpList : "/admin/rfpList",
+    addRfp : "/admin/addRfp",
+    vendorList : "/admin/vendorList",
 }
