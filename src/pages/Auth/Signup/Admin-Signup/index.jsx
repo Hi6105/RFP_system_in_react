@@ -1,8 +1,16 @@
 import { Flex } from "antd";
 import React from "react";
-import { Button, Form, Input } from "antd";
-import { VALIDATION } from "../../../../constants";
-import { Link } from "react-router-dom";
+import { Button, Form, Input, message } from "antd";
+import {
+  API_RESPONSE_TYPE,
+  MESSAGE,
+  REGEX,
+  VALIDATION,
+} from "../../../../constants";
+import { Link, useNavigate } from "react-router-dom";
+import AuthServices from "../../../../api/services/AuthServices";
+import { error, success } from "../../../../helper/ToastMessages";
+import { APP_ROUTES } from "../../../../config/AppConfig";
 
 const formItemLayout = {
   labelCol: {
@@ -24,14 +32,37 @@ const formItemLayout = {
 };
 
 const AdminSignup = () => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
+  const onFinish = async (values) => {
+    //Constructing the data object for sending the data at API call.
+    const data = {
+      firstname: values?.firstName,
+      lastname: values?.lastName,
+      email: values?.email,
+      password: values?.password,
+      mobile: values?.phoneNo,
+    };
+
+    // Calling the auth service for registering a new admin
+    const response = await AuthServices.adminSignup(data);
+
+    if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
+      success(MESSAGE?.adminRegistration, messageApi);
+      // Set a timeout to navigate after displaying the success message
+      setTimeout(() => {
+        navigate(APP_ROUTES?.login);
+      }, 2000); // Delay for 2 seconds (2000 milliseconds)
+    } else {
+      error(response?.data?.error[0], messageApi);
+    }
   };
 
   return (
     <>
+      {contextHolder}
       <div
         style={{
           width: "35%",
@@ -153,6 +184,23 @@ const AdminSignup = () => {
                 ]}
               >
                 <Input.Password />
+              </Form.Item>
+
+              <Form.Item
+                name="phoneNo"
+                label="Phone Number"
+                rules={[
+                  {
+                    required: true,
+                    message: VALIDATION?.phone?.required,
+                  },
+                  {
+                    pattern: REGEX?.phoneNo,
+                    message: VALIDATION?.phone?.match,
+                  },
+                ]}
+              >
+                <Input />
               </Form.Item>
 
               <Button

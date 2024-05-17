@@ -18,8 +18,11 @@ const Login = () => {
     // Calling the login API service for authentication
     const response = await AuthServices.login(values);
     if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
+      console.log(response);
       // Saving token and user data to local storage
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response?.data?.token);
+      localStorage.setItem("userId", response?.data?.user_id);
+      localStorage.setItem("type", response?.data?.type);
       localStorage.setItem("user", {
         type: response?.data?.type,
         user_id: response?.data?.user_id,

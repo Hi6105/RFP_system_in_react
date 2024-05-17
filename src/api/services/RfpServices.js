@@ -52,4 +52,28 @@ RfpServices.getRfpQuotes = async (data) => {
     return reponse;
 }
 
+//service for fetching RFPs made for a particular vendor
+RfpServices.getRfpByUserId = async (data) => {
+    // Retriving the authentication token from the local storage to pass it in the API call
+    const token = localStorage.getItem('token');
+    //Defining API route for the request
+    let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS.getRfpByUserId}/${data?.userId}`;
+    //Making the request.
+    const reponse = await get(apiRoute, token);
+    //Returning the response recieved from the API
+    return reponse;
+}
+
+//service for applying quote corresponding to a particular RFP
+RfpServices.applyRfp = async (data, rfpId) => {
+     // Retriving the authentication token from the local storage to pass it in the API call
+     const token = localStorage.getItem('token');
+     //Defining API route for the request
+     let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS?.applyRfp}/${rfpId}`;
+     //Making the request.
+     const reponse = await post(apiRoute, data, token);
+     //Returning the response recieved from the API
+     return reponse;
+}
+
 export default RfpServices;

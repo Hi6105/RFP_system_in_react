@@ -13,7 +13,7 @@ const items = [
   {
     key: APP_ROUTES?.vendorRfpList,
     icon: React.createElement(UserOutlined),
-    label: "RFP List",
+    label: "RFP For Quotes",
   },
 ];
 

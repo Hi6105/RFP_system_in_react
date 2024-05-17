@@ -13,12 +13,15 @@ const AddCategory = () => {
 
   const onFinish = async (values) => {
     const response = await CategoryServices.addCategory(values);
-    console.log(response);
 
     if (response?.data?.response === API_RESPONSE_TYPE.ERROR) {
       error(response?.data?.error, messageApi);
     } else {
       success(MESSAGE?.categorySaved, messageApi);
+      // Set a timeout to navigate after displaying the success message
+      setTimeout(() => {
+        navigate(APP_ROUTES?.adminCategories);
+      }, 2000); // Delay for 2 seconds (2000 milliseconds)
     }
   };
 

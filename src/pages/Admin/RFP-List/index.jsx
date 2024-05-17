@@ -26,10 +26,11 @@ const fetchRfps = async () => {
     rfps.map((rfp) => {
       data.push({
         itemName: rfp?.item_name,
-        rfpId: rfp?.id,
+        id: rfp?.id,
+        rfpId: rfp?.rfp_id,
         rfpNo: rfp?.rfp_no,
         lastDate: rfp?.last_date,
-        minAmount: rfp?.minimun_price,
+        minAmount: rfp?.minimum_price,
         maxAmount: rfp?.maximum_price,
         status: rfp?.status,
         action: rfp?.status == "open" ? "Close" : "",
@@ -54,8 +55,13 @@ const RfpList = () => {
   const columns = [
     {
       title: "RFP No.",
-      dataIndex: "rfpNo",
-      key: "rfpNo",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "RFP Title",
+      dataIndex: "itemName",
+      key: "itemName",
     },
     {
       title: "RFP Last Date",

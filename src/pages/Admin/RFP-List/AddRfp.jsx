@@ -71,6 +71,10 @@ const AddRfp = () => {
       error(response?.data?.errors[0], messageApi);
     } else {
       success(MESSAGE?.rfpCreated, messageApi);
+      // Set a timeout to navigate after displaying the success message
+      setTimeout(() => {
+        navigate(APP_ROUTES?.rfpList);
+      }, 2000); // Delay for 2 seconds (2000 milliseconds)
     }
   };
 
@@ -92,13 +96,15 @@ const AddRfp = () => {
       let vendorData = [];
 
       //Looping over the recived vendor data and extracting name and id of individual vendor
-      vendorsData.map((vendor) => {
-        //Pushing data into vendorData array
-        vendorData.push({
-          label: vendor?.name,
-          value: vendor?.user_id,
+      if (vendorsData) {
+        vendorsData.map((vendor) => {
+          //Pushing data into vendorData array
+          vendorData.push({
+            label: vendor?.name,
+            value: vendor?.user_id,
+          });
         });
-      });
+      }
 
       // Setting the data into vendor state
       setVendors(vendorData);

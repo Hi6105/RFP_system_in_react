@@ -29,4 +29,16 @@ AuthServices.signUp = async (data) => {
     return reponse;
 }
 
+//Signup service to register a new admin
+AuthServices.adminSignup = async (data) =>{
+    //Defining API route for the request
+    let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS?.registerAdmin}`;
+
+    //Making the request.
+    const reponse = await post(apiRoute, data);
+
+    //Returning the response recieved from the API
+    return reponse;
+}
+
 export default AuthServices;

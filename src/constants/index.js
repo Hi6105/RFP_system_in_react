@@ -47,6 +47,7 @@ export const VALIDATION = {
 // Common messages constants
 export const MESSAGE = {
     wrongCredentials : "Wrong Credentials!",
+    adminRegistration : "Admin Registered successfully",
     vendorRegistration : {
       success : "Vendor registered successfully",
       error : "error"
@@ -55,7 +56,7 @@ export const MESSAGE = {
     categorySaved : "Category saved successfully",
     vendorApproved : "Vendor approved successfully",
     rfpCreated : "RFP created",
-    rfpClosed : "RFP Closed successfully"
+    rfpClosed : "RFP Closed successfully",
 };
 
 // User Type Constants

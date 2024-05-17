@@ -11,6 +11,8 @@ import {
 import AuthServices from "../../../../api/services/AuthServices";
 import CategoryServices from "../../../../api/services/CategoryServices";
 import { fetchCategories } from "../../../../helper/Fetchdata";
+import { useNavigate } from "react-router-dom";
+import { APP_ROUTES } from "../../../../config/AppConfig";
 
 // Form item layout settings
 const formItemLayout = {
@@ -35,6 +37,7 @@ const formItemLayout = {
 const VendorSignup = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [categories, setCategories] = useState({});
+  const navigate = useNavigate();
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -68,8 +71,12 @@ const VendorSignup = () => {
 
     if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
       success(MESSAGE?.vendorRegistration?.success, messageApi);
+      // Set a timeout to navigate after displaying the success message
+      setTimeout(() => {
+        navigate(APP_ROUTES?.login);
+      }, 2000); // Delay for 2 seconds (2000 milliseconds)
     } else {
-      error(response?.data?.response, messageApi);
+      error(response?.data?.error[0], messageApi);
     }
   };
 

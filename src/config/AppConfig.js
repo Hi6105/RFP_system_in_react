@@ -5,6 +5,7 @@ export const API_ENDPOINTS = {
     login : "login",
     categories : "categories",
     registerVendor : "registervendor",
+    registerAdmin : "registeradmin",
     forgotPassword : "forgetPassword",
     getRfps : "rfp/all",
     getVendors : "vendorlist",
@@ -12,6 +13,8 @@ export const API_ENDPOINTS = {
     createRfp : "createrfp",
     closeRfp : "rfp/closerfp",
     getQuotes : "rfp/quotes",
+    getRfpByUserId : "rfp/getrfp",
+    applyRfp : "rfp/apply",
 };
 
 export const APP_ROUTES = {
@@ -30,4 +33,5 @@ export const APP_ROUTES = {
     vendorRfpList : "/vendor/rfpList",
     vendor : "/vendor",
     vendorDashboard : "/vendor/dashboard",
+    vendorApplyRfp : "/vendor/applyRfp",
 }
