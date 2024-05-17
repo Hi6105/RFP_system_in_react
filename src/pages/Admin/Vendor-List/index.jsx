@@ -1,52 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, Table, Tag, Button } from "antd";
-import { API_RESPONSE_TYPE } from "../../../constants";
-import { useNavigate } from "react-router-dom";
-import { APP_ROUTES } from "../../../config/AppConfig";
+import { message, Table, Tag, Button } from "antd";
+import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
 import VendorServices from "../../../api/services/VendorServices";
-
-// Defining the configuration for the columns of the rfp table.
-const columns = [
-  {
-    title: "S.No.",
-    dataIndex: "sNo",
-    key: "sNo",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "Contact No",
-    dataIndex: "phoneNo",
-    key: "phoneNo",
-  },
-  {
-    title: "Number of Employees",
-    dataIndex: "numberOfEmployees",
-    key: "numberOfEmployees",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-    render: (text) =>
-      text === "Open" ? (
-        <Tag color="green">{text}</Tag>
-      ) : (
-        <Tag color="red">{text}</Tag>
-      ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-    render: (text) =>
-      text === "Approve" ? <Button type="link">{text}</Button> : "",
-  },
-];
+import { approveVendor } from "../../../helper/Fetchdata";
+import { error, success } from "../../../helper/ToastMessages";
 
 const fetchVendors = async () => {
   // Fetching all the RFPs
@@ -64,6 +22,7 @@ const fetchVendors = async () => {
     // Iterating over the rfps recieved to formulate data for table rows.
     vendors.map((vendor) => {
       data.push({
+        userId: vendor?.user_id,
         sNo: serialNumber,
         email: vendor?.email,
         phoneNo: vendor?.mobile,
@@ -84,8 +43,56 @@ const fetchVendors = async () => {
 };
 
 const VendorList = () => {
-  const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
   const [vendors, setVendors] = useState([]);
+
+  // Defining the configuration for the columns of the rfp table.
+  const columns = [
+    {
+      title: "S.No.",
+      dataIndex: "sNo",
+      key: "sNo",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+    },
+    {
+      title: "Contact No",
+      dataIndex: "phoneNo",
+      key: "phoneNo",
+    },
+    {
+      title: "Number of Employees",
+      dataIndex: "numberOfEmployees",
+      key: "numberOfEmployees",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (text) =>
+        text === "Approved" ? (
+          <Tag color="green">{text}</Tag>
+        ) : (
+          <Tag color="red">{text}</Tag>
+        ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      render: (text, record) =>
+        text === "Approve" ? (
+          <Button type="link" onClick={() => handleApproveClick(record)}>
+            {text}
+          </Button>
+        ) : (
+          ""
+        ),
+    },
+  ];
 
   useEffect(() => {
     // Storing data of rfps from API fetch
@@ -97,12 +104,26 @@ const VendorList = () => {
     fetchData();
   }, []);
 
-  const handleAddRfp = () => {
-    navigate(APP_ROUTES?.addRfp);
+  // Handler function for approving a vendor
+  const handleApproveClick = async (record) => {
+    // Making the API call
+    const response = await approveVendor({
+      user_id: record?.userId,
+      status: "approved",
+      _method: "put",
+    });
+
+    // Based on response displaying the toast message
+    if (response === API_RESPONSE_TYPE.SUCCESS) {
+      success(MESSAGE?.vendorApproved, messageApi);
+    } else {
+      error(MESSAGE?.wentWrong, messageApi);
+    }
   };
 
   return (
     <>
+      {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>Vendors List</h1>
         <p style={{ marginLeft: "auto" }}>Home</p>

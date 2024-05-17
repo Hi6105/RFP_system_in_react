@@ -1,51 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, Table, Tag, Button } from "antd";
-import { API_RESPONSE_TYPE } from "../../../constants";
+import { Flex, message, Table, Tag, Button } from "antd";
+import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
 import { useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import RfpServices from "../../../api/services/RfpServices";
+import { error, success } from "../../../helper/ToastMessages";
+import { useDispatch } from "react-redux";
+import { setItemName, setRfpId } from "../../../redux/slices/rfpSlice";
+import { ArrowRightOutlined } from "@ant-design/icons";
 
-// Defining the configuration for the columns of the rfp table.
-const columns = [
-  {
-    title: "RFP No.",
-    dataIndex: "rfpNo",
-    key: "rfpNo",
-  },
-  {
-    title: "RFP Last Date",
-    dataIndex: "lastDate",
-    key: "lastDate",
-  },
-  {
-    title: "Min Amount",
-    dataIndex: "minAmount",
-    key: "minAmount",
-  },
-  {
-    title: "Max Amount",
-    dataIndex: "maxAmount",
-    key: "maxAmount",
-  },
-  {
-    title: "Status",
-    dataIndex: "status",
-    key: "status",
-    render: (text) =>
-      text === "Open" ? (
-        <Tag color="green">{text}</Tag>
-      ) : (
-        <Tag color="red">{text}</Tag>
-      ),
-  },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-  },
-];
-
+//Function to fetch all the RFPs
 const fetchRfps = async () => {
   // Fetching all the RFPs
   const response = await RfpServices.getAllRfps();
@@ -60,12 +25,14 @@ const fetchRfps = async () => {
     // Iterating over the rfps recieved to formulate data for table rows.
     rfps.map((rfp) => {
       data.push({
+        itemName: rfp?.item_name,
+        rfpId: rfp?.id,
         rfpNo: rfp?.rfp_no,
         lastDate: rfp?.last_date,
         minAmount: rfp?.minimun_price,
         maxAmount: rfp?.maximum_price,
         status: rfp?.status,
-        action: rfp?.status == "Open" ? "Close" : "",
+        action: rfp?.status == "open" ? "Close" : "",
       });
     });
 
@@ -79,7 +46,65 @@ const fetchRfps = async () => {
 
 const RfpList = () => {
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+  const dispatch = useDispatch();
   const [rfps, setRfps] = useState([]);
+
+  // Defining the configuration for the columns of the rfp table.
+  const columns = [
+    {
+      title: "RFP No.",
+      dataIndex: "rfpNo",
+      key: "rfpNo",
+    },
+    {
+      title: "RFP Last Date",
+      dataIndex: "lastDate",
+      key: "lastDate",
+    },
+    {
+      title: "Min Amount",
+      dataIndex: "minAmount",
+      key: "minAmount",
+    },
+    {
+      title: "Max Amount",
+      dataIndex: "maxAmount",
+      key: "maxAmount",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: (text) =>
+        text === "Open" ? (
+          <Tag color="green">{text}</Tag>
+        ) : (
+          <Tag color="red">{text}</Tag>
+        ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      render: (text, record) =>
+        text === "Close" ? (
+          <Button type="link" onClick={() => handleCloseRfp(record)}>
+            {text}
+          </Button>
+        ) : (
+          ""
+        ),
+    },
+    {
+      title: "Quotes",
+      render: (record) => (
+        <Button type="link" onClick={() => handleShowQuotesRfp(record)}>
+          <ArrowRightOutlined />
+        </Button>
+      ),
+    },
+  ];
 
   useEffect(() => {
     // Storing data of rfps from API fetch
@@ -95,8 +120,37 @@ const RfpList = () => {
     navigate(APP_ROUTES?.addRfp);
   };
 
+  //Function to handle action on RFP(Closing a particular rfp)
+  const handleCloseRfp = async (rfpDetails) => {
+    //Formulating data for API call
+    const data = {
+      rfpId: rfpDetails?.rfpId,
+    };
+
+    //Making a request to closeRfp API service
+    const response = await RfpServices.closeRfp(data);
+
+    // Based on response displaying the toast message
+    if (response === API_RESPONSE_TYPE?.SUCCESS) {
+      success(MESSAGE?.rfpClosed, messageApi);
+    } else {
+      error(MESSAGE?.wentWrong, messageApi);
+    }
+  };
+
+  //Function to handle redirection to quotes for a particular RFP
+  const handleShowQuotesRfp = async (record) => {
+    //Setting RFP Id and Item Name for the selected RFP inside redux store
+    dispatch(setRfpId(record?.rfpId));
+    dispatch(setItemName(record?.itemName));
+
+    //Navigating to the RFP quotes page.
+    navigate(APP_ROUTES?.rfpQuotesList);
+  };
+
   return (
     <>
+      {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>RFP List</h1>
         <p style={{ marginLeft: "auto" }}>Home</p>

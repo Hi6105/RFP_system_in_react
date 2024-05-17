@@ -40,6 +40,7 @@ export const VALIDATION = {
   },
   phone: { required: "Please input the Phone number!", match: "Please enter a valid Phone number!" },
   categories: "Please select a category!",
+  rfpVendorSelect : "Please select a category first!",
 };
 // Validation messages related key ends
 
@@ -52,6 +53,9 @@ export const MESSAGE = {
     },
     wentWrong : "Something went wrong.",
     categorySaved : "Category saved successfully",
+    vendorApproved : "Vendor approved successfully",
+    rfpCreated : "RFP created",
+    rfpClosed : "RFP Closed successfully"
 };
 
 // User Type Constants

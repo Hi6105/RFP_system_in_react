@@ -21,11 +21,6 @@ const items = [
     label: "RFP List",
   },
   {
-    key: String(4),
-    icon: React.createElement(UserOutlined),
-    label: "RFP Quotes",
-  },
-  {
     key: APP_ROUTES?.adminCategories,
     icon: React.createElement(UserOutlined),
     label: "Categories",

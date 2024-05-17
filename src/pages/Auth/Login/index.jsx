@@ -27,7 +27,9 @@ const Login = () => {
         email: response?.data?.email,
       });
       // Navigate to admin dashboard route
-      navigate(APP_ROUTES?.adminDashboard);
+      if (response?.data?.type === "admin")
+        navigate(APP_ROUTES?.adminDashboard);
+      else navigate(APP_ROUTES?.vendorDashboard);
     } else {
       //Showing toast message if credentials entered are wrong.
       error(MESSAGE?.wrongCredentials, messageApi);

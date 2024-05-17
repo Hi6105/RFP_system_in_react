@@ -8,6 +8,10 @@ export const API_ENDPOINTS = {
     forgotPassword : "forgetPassword",
     getRfps : "rfp/all",
     getVendors : "vendorlist",
+    approveVendor : "approveVendor",
+    createRfp : "createrfp",
+    closeRfp : "rfp/closerfp",
+    getQuotes : "rfp/quotes",
 };
 
 export const APP_ROUTES = {
@@ -22,4 +26,8 @@ export const APP_ROUTES = {
     rfpList : "/admin/rfpList",
     addRfp : "/admin/addRfp",
     vendorList : "/admin/vendorList",
+    rfpQuotesList : "/admin/rfpQuotesList",
+    vendorRfpList : "/vendor/rfpList",
+    vendor : "/vendor",
+    vendorDashboard : "/vendor/dashboard",
 }
