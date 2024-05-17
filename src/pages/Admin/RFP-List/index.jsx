@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, message, Table, Tag, Button } from "antd";
+import { Flex, message, Table, Tag, Button, Spin } from "antd";
 import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
 import { useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
@@ -47,9 +47,10 @@ const fetchRfps = async () => {
 
 const RfpList = () => {
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
+  const [messageApi, contextHolder] = message.useMessage();
   const [rfps, setRfps] = useState([]);
+  const [spinning, setSpinning] = useState(false);
 
   // Defining the configuration for the columns of the rfp table.
   const columns = [
@@ -115,8 +116,12 @@ const RfpList = () => {
   useEffect(() => {
     // Storing data of rfps from API fetch
     const fetchData = async () => {
+      //setting spinning loader to show
+      setSpinning(true);
       const rfpData = await fetchRfps();
       setRfps(rfpData);
+      //setting spinning loader to hide
+      setSpinning(false);
     };
 
     fetchData();
@@ -184,7 +189,9 @@ const RfpList = () => {
               + Add RFP
             </Button>
           </Flex>
-          <Table columns={columns} dataSource={rfps} />
+          <Spin tip="Loading..." spinning={spinning}>
+            <Table columns={columns} dataSource={rfps} />
+          </Spin>
         </div>
       </Content>
     </>

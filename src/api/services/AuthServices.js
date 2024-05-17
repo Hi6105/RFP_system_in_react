@@ -41,4 +41,28 @@ AuthServices.adminSignup = async (data) =>{
     return reponse;
 }
 
+//auth service for sending otp for resetting password
+AuthServices.forgotPassword = async (data) => {
+    //Defining API route for the request
+    let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS?.forgotPassword}`;
+
+    //Making the request.
+    const reponse = await post(apiRoute, data);
+
+    //Returning the response recieved from the API
+    return reponse;
+}
+
+//auth service for updating password 
+AuthServices.resetPassword = async (data) => {
+    //Defining API route for the request
+    let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS?.resetPassword}`;
+
+    //Making the request.
+    const reponse = await post(apiRoute, data);
+
+    //Returning the response recieved from the API
+    return reponse;
+}
+
 export default AuthServices;

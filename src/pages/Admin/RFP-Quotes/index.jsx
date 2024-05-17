@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Table } from "antd";
+import { Table, Spin } from "antd";
 import { fetchQuotes } from "../../../helper/Fetchdata";
 import { useSelector } from "react-redux";
 
@@ -8,6 +8,7 @@ const RfpQuotesList = () => {
   //Fetching data of RFP id and corresponding item name from the redux store.
   const rfpId = useSelector((state) => state?.rfp?.selectedRfpId);
   const itemName = useSelector((state) => state?.rfp?.selectedItemName);
+  const [spinning, setSpinning] = useState(false);
   const [quotes, setQuotes] = useState([]);
 
   // Defining the configuration for the columns of the rfp table.
@@ -42,6 +43,8 @@ const RfpQuotesList = () => {
   useEffect(() => {
     // Storing data of quotes from API fetch
     const fetchData = async () => {
+      //setting spinning loader to show.
+      setSpinning(true);
       const data = [];
 
       //Making request to the function that calls the API for fetching quotes corresponding to particular RFP.
@@ -65,6 +68,8 @@ const RfpQuotesList = () => {
 
       //Setting the formulated data into quotes variable state
       setQuotes(data);
+      //setting spinning loader to hide
+      setSpinning(false);
     };
 
     fetchData();
@@ -90,7 +95,9 @@ const RfpQuotesList = () => {
           }}
         >
           <h4 style={{ margin: "10px" }}>RFP Quotes</h4>
-          <Table columns={columns} dataSource={quotes} />
+          <Spin tip="Loading..." spinning={spinning}>
+            <Table columns={columns} dataSource={quotes} />
+          </Spin>
         </div>
       </Content>
     </>

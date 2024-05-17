@@ -1,65 +1,46 @@
 import { Flex } from "antd";
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Form, Input, message, Spin } from "antd";
+import { error, success } from "../../../helper/ToastMessages";
 import {
   API_RESPONSE_TYPE,
   MESSAGE,
   REGEX,
   VALIDATION,
-} from "../../../../constants";
-import { Link, useNavigate } from "react-router-dom";
-import AuthServices from "../../../../api/services/AuthServices";
-import { error, success } from "../../../../helper/ToastMessages";
-import { APP_ROUTES } from "../../../../config/AppConfig";
+} from "../../../constants";
+import AuthServices from "../../../api/services/AuthServices";
+import { APP_ROUTES } from "../../../config/AppConfig";
 
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 8,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 16,
-    },
-  },
-};
-
-const AdminSignup = () => {
-  const [messageApi, contextHolder] = message.useMessage();
+const ResetPassword = () => {
   const [spinning, setSpinning] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
-  const [form] = Form.useForm();
 
+  // Function to authenticate a user through his login credentials
   const onFinish = async (values) => {
     //setting spinning loader to show
     setSpinning(true);
-    //Constructing the data object for sending the data at API call.
+    //Formulating the data that is to be sent in the API
     const data = {
-      firstname: values?.firstName,
-      lastname: values?.lastName,
       email: values?.email,
-      password: values?.password,
-      mobile: values?.phoneNo,
+      new_password: values?.password,
+      otp: values?.otp,
     };
 
-    // Calling the auth service for registering a new admin
-    const response = await AuthServices.adminSignup(data);
+    //Making request to the service that updates the password
+    const response = await AuthServices.resetPassword(data);
 
-    if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
-      success(MESSAGE?.adminRegistration, messageApi);
+    //Checking the response from the API
+    if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
+      success(MESSAGE?.passwordReset, messageApi);
       // Set a timeout to navigate after displaying the success message
       setTimeout(() => {
         navigate(APP_ROUTES?.login);
       }, 2000); // Delay for 2 seconds (2000 milliseconds)
     } else {
-      error(response?.data?.error[0], messageApi);
+      //Showing toast message if credentials entered are wrong.
+      error(response?.data?.message, messageApi);
     }
     //setting spinning loader to hide
     setSpinning(false);
@@ -67,18 +48,17 @@ const AdminSignup = () => {
 
   return (
     <>
-      {contextHolder}
       <div
         style={{
           width: "35%",
           marginRight: "auto",
-          backgroundColor: "#fff",
           marginLeft: "auto",
           marginTop: "100px",
-          marginBottom: "100px",
+          backgroundColor: "#fff",
           borderRadius: "10px",
         }}
       >
+        {contextHolder}
         <Spin tip="Loading..." spinning={spinning}>
           <Flex gap="small" vertical={true}>
             <div
@@ -93,49 +73,15 @@ const AdminSignup = () => {
               }}
             >
               <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
-              <p style={{ color: "#3d8ef8" }}>Sign up to continue</p>
+              <p style={{ color: "#3d8ef8" }}>Reset Password</p>
             </div>
             <div key={1} style={{ padding: "4%" }}>
               <Form
-                {...formItemLayout}
-                form={form}
-                name="register"
+                name="normal_login"
+                className="login-form"
+                layout="vertical"
                 onFinish={onFinish}
-                initialValues={{
-                  residence: ["zhejiang", "hangzhou", "xihu"],
-                  prefix: "86",
-                }}
-                style={{
-                  maxWidth: 600,
-                }}
-                scrollToFirstError
               >
-                <Form.Item
-                  name="firstName"
-                  label="First Name"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.firstname,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item
-                  name="lastName"
-                  label="Last Name"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.lastname,
-                    },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-
                 <Form.Item
                   name="email"
                   label="E-mail"
@@ -155,15 +101,11 @@ const AdminSignup = () => {
 
                 <Form.Item
                   name="password"
-                  label="Password"
+                  label="New Password"
                   rules={[
                     {
                       required: true,
                       message: VALIDATION?.password,
-                    },
-                    {
-                      pattern: REGEX?.password,
-                      message: VALIDATION?.passwordLength,
                     },
                   ]}
                   hasFeedback
@@ -195,40 +137,34 @@ const AdminSignup = () => {
                 >
                   <Input.Password />
                 </Form.Item>
-
                 <Form.Item
-                  name="phoneNo"
-                  label="Phone Number"
+                  name="otp"
+                  label="OTP"
                   rules={[
                     {
                       required: true,
-                      message: VALIDATION?.phone?.required,
+                      message: VALIDATION?.required,
                     },
                     {
-                      pattern: REGEX?.phoneNo,
-                      message: VALIDATION?.phone?.match,
+                      pattern: REGEX?.number,
+                      message: VALIDATION?.noofemployees?.match,
                     },
                   ]}
                 >
                   <Input />
                 </Form.Item>
 
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="login-form-button"
-                >
-                  Sign Up
-                </Button>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="login-form-button"
+                  >
+                    Submit
+                  </Button>
+                </Form.Item>
               </Form>
             </div>
-
-            <Link to="/vendorSignup">
-              <p style={{ textAlign: "center" }}>Register as Vendor</p>
-            </Link>
-            <Link to="/forgotPassword">
-              <p style={{ textAlign: "center" }}>Forgot password</p>
-            </Link>
           </Flex>
         </Spin>
       </div>
@@ -236,4 +172,4 @@ const AdminSignup = () => {
   );
 };
 
-export default AdminSignup;
+export default ResetPassword;

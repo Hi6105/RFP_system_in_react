@@ -1,5 +1,5 @@
-import React from "react";
-import { Form, Input, Button, Flex, message } from "antd";
+import React, { useState } from "react";
+import { Form, Input, Button, Flex, message, Spin } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../constants";
 import { useNavigate } from "react-router-dom";
@@ -9,11 +9,17 @@ import { error, success } from "../../../helper/ToastMessages";
 
 const AddCategory = () => {
   const [messageApi, contextHolder] = message.useMessage();
+  const [spinning, setSpinning] = useState(false);
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
+    //setting spinning loader to show
+    setSpinning(true);
+
+    //Making request to add a new category
     const response = await CategoryServices.addCategory(values);
 
+    //Based on the response displaying the toast message
     if (response?.data?.response === API_RESPONSE_TYPE.ERROR) {
       error(response?.data?.error, messageApi);
     } else {
@@ -23,6 +29,8 @@ const AddCategory = () => {
         navigate(APP_ROUTES?.adminCategories);
       }, 2000); // Delay for 2 seconds (2000 milliseconds)
     }
+    //setting spinning loader to hide
+    setSpinning(false);
   };
 
   const handleCancel = () => {
@@ -36,57 +44,59 @@ const AddCategory = () => {
         <h1>Add Category</h1>
         <p style={{ marginLeft: "auto" }}>Home</p>
       </div>
-      <Content
-        style={{
-          margin: "0 16px",
-          overflow: "initial",
-        }}
-      >
-        <div
+      <Spin tip="Loading..." spinning={spinning}>
+        <Content
           style={{
-            padding: 24,
-            background: "#fff",
-            borderRadius: "10px",
+            margin: "0 16px",
+            overflow: "initial",
           }}
         >
           <div
             style={{
-              width: 500,
-              marginLeft: "auto",
-              marginRight: "auto",
+              padding: 24,
+              background: "#fff",
+              borderRadius: "10px",
             }}
           >
-            <Form
-              name="normal_login"
-              className="login-form"
-              layout="vertical"
-              onFinish={onFinish}
+            <div
+              style={{
+                width: 500,
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
             >
-              <Form.Item
-                label="Category Name"
-                name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.required,
-                  },
-                ]}
+              <Form
+                name="normal_login"
+                className="login-form"
+                layout="vertical"
+                onFinish={onFinish}
               >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  label="Category Name"
+                  name="name"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.required,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item>
-                <Flex justify="flex-end" gap="middle">
-                  <Button type="primary" htmlType="submit">
-                    Submit
-                  </Button>
-                  <Button onClick={handleCancel}>Cancel</Button>
-                </Flex>
-              </Form.Item>
-            </Form>
+                <Form.Item>
+                  <Flex justify="flex-end" gap="middle">
+                    <Button type="primary" htmlType="submit">
+                      Submit
+                    </Button>
+                    <Button onClick={handleCancel}>Cancel</Button>
+                  </Flex>
+                </Form.Item>
+              </Form>
+            </div>
           </div>
-        </div>
-      </Content>
+        </Content>
+      </Spin>
     </>
   );
 };

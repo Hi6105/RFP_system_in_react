@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, Table, Tag, Button } from "antd";
-import CategoryServices from "../../../api/services/CategoryServices";
-import { API_RESPONSE_TYPE } from "../../../constants";
+import { Flex, Table, Tag, Button, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { fetchCategories } from "../../../helper/Fetchdata";
@@ -30,21 +28,19 @@ const columns = [
         <Tag color="red">{text}</Tag>
       ),
   },
-  {
-    title: "Action",
-    key: "action",
-    dataIndex: "action",
-  },
 ];
 
 const AdminCategories = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
+  const [spinning, setSpinning] = useState(false);
 
   useEffect(() => {
     const data = [];
     // Storing data of categories from API fetch
     const fetchData = async () => {
+      //setting spinning loader to show
+      setSpinning(true);
       let categoriesData = await fetchCategories();
       // Obtaining the data of categories from the object into an array.
       categoriesData = Object.values(categoriesData);
@@ -58,11 +54,12 @@ const AdminCategories = () => {
           sNo: serialNumber,
           category: category?.name,
           status: category?.status,
-          action: category?.status == "Active" ? "Deactivate" : "Activate",
         });
         serialNumber += 1;
       });
       setCategories(data);
+      //setting spinning loader to hide
+      setSpinning(false);
     };
 
     fetchData();
@@ -101,7 +98,9 @@ const AdminCategories = () => {
               Add Category
             </Button>
           </Flex>
-          <Table columns={columns} dataSource={categories} />
+          <Spin tip="Loading..." spinning={spinning}>
+            <Table columns={columns} dataSource={categories} />
+          </Spin>
         </div>
       </Content>
     </>

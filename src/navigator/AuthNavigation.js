@@ -7,6 +7,7 @@ const VendorSignup = lazy(() => import("../pages/Auth/Signup/Vendor-Signup"));
 const AdminSignup = lazy(() => import("../pages/Auth/Signup/Admin-Signup"));
 const ForgotPassword = lazy(() => import("../pages/Auth/Forgot-Password"));
 const AuthLayout = lazy(() => import("../layout/auth-layout"));
+const ResetPassword = lazy(() => import("../pages/Auth/Reset-Password"));
 
 export const authRoutes = {
   path: "/",
@@ -52,5 +53,13 @@ export const authRoutes = {
         </Suspense>
       ),
     },
+    {
+        path: `${APP_ROUTES?.resetPassword}`,
+        element: (
+          <Suspense fallback={"loading"}>
+            <ResetPassword />
+          </Suspense>
+        ),
+      },
   ],
 };

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { message, Table, Tag, Button } from "antd";
+import { message, Table, Tag, Button, Spin } from "antd";
 import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
 import VendorServices from "../../../api/services/VendorServices";
 import { approveVendor } from "../../../helper/Fetchdata";
 import { error, success } from "../../../helper/ToastMessages";
+import { useNavigate } from "react-router-dom";
 
 const fetchVendors = async () => {
   // Fetching all the RFPs
   const response = await VendorServices.getAllVendors();
-  console.log(response);
 
   const data = [];
 
@@ -44,6 +44,7 @@ const fetchVendors = async () => {
 
 const VendorList = () => {
   const [messageApi, contextHolder] = message.useMessage();
+  const [spinning, setSpinning] = useState(false);
   const [vendors, setVendors] = useState([]);
 
   // Defining the configuration for the columns of the rfp table.
@@ -97,8 +98,12 @@ const VendorList = () => {
   useEffect(() => {
     // Storing data of rfps from API fetch
     const fetchData = async () => {
+      //setting spinning loader to show
+      setSpinning(true);
       const vendorData = await fetchVendors();
       setVendors(vendorData);
+      //setting spinning loader to hide
+      setSpinning(false);
     };
 
     fetchData();
@@ -106,6 +111,7 @@ const VendorList = () => {
 
   // Handler function for approving a vendor
   const handleApproveClick = async (record) => {
+    setSpinning(true);
     // Making the API call
     const response = await approveVendor({
       user_id: record?.userId,
@@ -119,6 +125,8 @@ const VendorList = () => {
     } else {
       error(MESSAGE?.wentWrong, messageApi);
     }
+    setSpinning(false);
+    window.location.reload();
   };
 
   return (
@@ -142,7 +150,9 @@ const VendorList = () => {
           }}
         >
           <h4 style={{ margin: "10px" }}>Vendors</h4>
-          <Table columns={columns} dataSource={vendors} />
+          <Spin tip="Loading..." spinning={spinning}>
+            <Table columns={columns} dataSource={vendors} />
+          </Spin>
         </div>
       </Content>
     </>

@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, message, Table, Tag, Button } from "antd";
-import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
+import { Flex, Table, Tag, Spin, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
-import RfpServices from "../../../api/services/RfpServices";
-import { error, success } from "../../../helper/ToastMessages";
 import { useDispatch } from "react-redux";
-import { setItemName, setRfpId } from "../../../redux/slices/rfpSlice";
-import { ArrowRightOutlined } from "@ant-design/icons";
+import { setRfpId } from "../../../redux/slices/rfpSlice";
 import { getRfpByUserId } from "../../../helper/Fetchdata";
 
 const RfpForQuotes = () => {
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
   const dispatch = useDispatch();
   const [rfps, setRfps] = useState([]);
+  const [spinning, setSpinning] = useState(false);
 
   // Defining the configuration for the columns of the rfp table.
   const columns = [
@@ -73,12 +69,21 @@ const RfpForQuotes = () => {
   useEffect(() => {
     // Storing data of rfps from API fetch
     const fetchData = async () => {
+      //setting spinning loader to show
+      setSpinning(true);
+
+      //fetching user id from local storage to formulate data for the API
       const userId = localStorage.getItem("userId");
       const data = {
         userId: userId,
       };
+
+      //fetching rfp made for a particular vendor
       const rfpData = await getRfpByUserId(data);
+      //setting rfps in the state variable
       setRfps(rfpData);
+      //setting spinning loader to hide
+      setSpinning(false);
     };
 
     fetchData();
@@ -95,7 +100,6 @@ const RfpForQuotes = () => {
 
   return (
     <>
-      {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>RFP List</h1>
         <p style={{ marginLeft: "auto" }}>Home</p>
@@ -120,7 +124,9 @@ const RfpForQuotes = () => {
           >
             <h4>RFP</h4>
           </Flex>
-          <Table columns={columns} dataSource={rfps} />
+          <Spin tip="Loading..." spinning={spinning}>
+            <Table columns={columns} dataSource={rfps} />
+          </Spin>
         </div>
       </Content>
     </>

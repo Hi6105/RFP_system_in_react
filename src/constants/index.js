@@ -10,6 +10,7 @@ export const VALIDATION = {
   numeric : "Please enter a valid numeric value!",
   firstname: "Please input your First name!",
   lastname: "Please input your Last name!",
+  passwordLength : "Password should be of 8 length minimum",
   email: {
     invalid: "The input is not valid E-mail!",
     required: "Please input your Email!",
@@ -57,6 +58,8 @@ export const MESSAGE = {
     vendorApproved : "Vendor approved successfully",
     rfpCreated : "RFP created",
     rfpClosed : "RFP Closed successfully",
+    otpSent : "An OTP has been sent on your E-Mail address",
+    passwordReset : "Your Password is successfully changed!",
 };
 
 // User Type Constants
@@ -73,4 +76,5 @@ export const REGEX = {
   gstNo : /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
   panNo : /[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
   phoneNo : /^\d{10}$/,
+  password : /^.{8,}$/,
 }

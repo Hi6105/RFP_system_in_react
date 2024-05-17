@@ -1,6 +1,6 @@
 import { Flex } from "antd";
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message, Select } from "antd";
+import { Button, Form, Input, message, Select, Spin } from "antd";
 import { success, error } from "../../../../helper/ToastMessages";
 import {
   API_RESPONSE_TYPE,
@@ -9,9 +9,8 @@ import {
   VALIDATION,
 } from "../../../../constants";
 import AuthServices from "../../../../api/services/AuthServices";
-import CategoryServices from "../../../../api/services/CategoryServices";
 import { fetchCategories } from "../../../../helper/Fetchdata";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../../config/AppConfig";
 
 // Form item layout settings
@@ -37,6 +36,7 @@ const formItemLayout = {
 const VendorSignup = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [categories, setCategories] = useState({});
+  const [spinning, setSpinning] = useState(false);
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
@@ -52,6 +52,8 @@ const VendorSignup = () => {
 
   //Function for registering a new vendor on form submission.
   const onFinish = async (values) => {
+    //setting spinning loader to show
+    setSpinning(true);
     //Constructing the data object for sending the data at API call.
     const data = {
       firstname: values?.firstName,
@@ -78,6 +80,8 @@ const VendorSignup = () => {
     } else {
       error(response?.data?.error[0], messageApi);
     }
+    //setting spinning loader to hide
+    setSpinning(false);
   };
 
   return (
@@ -94,234 +98,240 @@ const VendorSignup = () => {
           borderRadius: "10px",
         }}
       >
-        <Flex gap="small" vertical={true}>
-          <div
-            key={0}
-            style={{
-              backgroundColor: "#c1d8f7",
-              padding: "4%",
-              borderRadius: "10px 10px 0 0",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
-            <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
-            <p style={{ color: "#3d8ef8" }}>Sign up to continue</p>
-          </div>
-          <div key={1} style={{ padding: "4%" }}>
-            <Form
-              {...formItemLayout}
-              form={form}
-              name="register"
-              onFinish={onFinish}
-              initialValues={{
-                residence: ["zhejiang", "hangzhou", "xihu"],
-                prefix: "86",
-              }}
+        <Spin tip="Loading..." spinning={spinning}>
+          <Flex gap="small" vertical={true}>
+            <div
+              key={0}
               style={{
-                maxWidth: 600,
+                backgroundColor: "#c1d8f7",
+                padding: "4%",
+                borderRadius: "10px 10px 0 0",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
               }}
-              scrollToFirstError
             >
-              <Form.Item
-                name="firstName"
-                label="First Name"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.firstname,
-                  },
-                ]}
+              <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
+              <p style={{ color: "#3d8ef8" }}>Sign up to continue</p>
+            </div>
+            <div key={1} style={{ padding: "4%" }}>
+              <Form
+                {...formItemLayout}
+                form={form}
+                name="register"
+                onFinish={onFinish}
+                initialValues={{
+                  residence: ["zhejiang", "hangzhou", "xihu"],
+                  prefix: "86",
+                }}
+                style={{
+                  maxWidth: 600,
+                }}
+                scrollToFirstError
               >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="lastName"
-                label="Last Name"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.lastname,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="email"
-                label="E-mail"
-                rules={[
-                  {
-                    type: "email",
-                    message: VALIDATION?.email?.invalid,
-                  },
-                  {
-                    required: true,
-                    message: VALIDATION?.email?.required,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.password,
-                  },
-                ]}
-                hasFeedback
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                name="confirm"
-                label="Confirm Password"
-                dependencies={["password"]}
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.confirmpassword?.required,
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue("password") === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(
-                        new Error(VALIDATION?.confirmpassword?.match)
-                      );
+                <Form.Item
+                  name="firstName"
+                  label="First Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.firstname,
                     },
-                  }),
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                name="revenue"
-                label="Revenue"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.revenue?.required,
-                  },
-                  {
-                    pattern: REGEX?.revenue,
-                    message: VALIDATION?.revenue?.match,
-                  },
-                ]}
-              >
-                <Input placeholder="(Last 3 years in Lakhs)" />
-              </Form.Item>
+                <Form.Item
+                  name="lastName"
+                  label="Last Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.lastname,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                name="numberOfEmployees"
-                label="No of Employees"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.noofemployees?.required,
-                  },
-                  {
-                    pattern: REGEX?.number,
-                    message: VALIDATION?.noofemployees?.match,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  name="email"
+                  label="E-mail"
+                  rules={[
+                    {
+                      type: "email",
+                      message: VALIDATION?.email?.invalid,
+                    },
+                    {
+                      required: true,
+                      message: VALIDATION?.email?.required,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Form.Item
-                name="gstNo"
-                label="GST No"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.gstno?.required,
-                  },
-                  {
-                    pattern: REGEX?.gstNo,
-                    message: VALIDATION?.gstno?.match,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  name="password"
+                  label="Password"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.password,
+                    },
+                  ]}
+                  hasFeedback
+                >
+                  <Input.Password />
+                </Form.Item>
 
-              <Form.Item
-                name="panNo"
-                label="PAN No"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.panno?.required,
-                  },
-                  {
-                    pattern: REGEX.panNo,
-                    message: VALIDATION?.panno?.match,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  name="confirm"
+                  label="Confirm Password"
+                  dependencies={["password"]}
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.confirmpassword?.required,
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error(VALIDATION?.confirmpassword?.match)
+                        );
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
 
-              <Form.Item
-                name="phoneNo"
-                label="Phone Number"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.phone?.required,
-                  },
-                  {
-                    pattern: REGEX?.phoneNo,
-                    message: VALIDATION?.phone?.match,
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
+                <Form.Item
+                  name="revenue"
+                  label="Revenue"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.revenue?.required,
+                    },
+                    {
+                      pattern: REGEX?.revenue,
+                      message: VALIDATION?.revenue?.match,
+                    },
+                  ]}
+                >
+                  <Input placeholder="(Last 3 years in Lakhs)" />
+                </Form.Item>
 
-              <Form.Item
-                name="category"
-                label="Categories"
-                rules={[
-                  {
-                    required: true,
-                    message: VALIDATION?.categories,
-                  },
-                ]}
-              >
-                <Select>
-                  {Object.values(categories).map((category) => (
-                    <Select.Option key={category?.id} value={category?.id}>
-                      {category?.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
+                <Form.Item
+                  name="numberOfEmployees"
+                  label="No of Employees"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.noofemployees?.required,
+                    },
+                    {
+                      pattern: REGEX?.number,
+                      message: VALIDATION?.noofemployees?.match,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
 
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
-              >
-                Register
-              </Button>
-            </Form>
-          </div>
-          <p style={{ textAlign: "center" }}>Register as Admin</p>
-          <p style={{ textAlign: "center" }}>Forgot password</p>
-        </Flex>
+                <Form.Item
+                  name="gstNo"
+                  label="GST No"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.gstno?.required,
+                    },
+                    {
+                      pattern: REGEX?.gstNo,
+                      message: VALIDATION?.gstno?.match,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name="panNo"
+                  label="PAN No"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.panno?.required,
+                    },
+                    {
+                      pattern: REGEX.panNo,
+                      message: VALIDATION?.panno?.match,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name="phoneNo"
+                  label="Phone Number"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.phone?.required,
+                    },
+                    {
+                      pattern: REGEX?.phoneNo,
+                      message: VALIDATION?.phone?.match,
+                    },
+                  ]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name="category"
+                  label="Categories"
+                  rules={[
+                    {
+                      required: true,
+                      message: VALIDATION?.categories,
+                    },
+                  ]}
+                >
+                  <Select>
+                    {Object.values(categories).map((category) => (
+                      <Select.Option key={category?.id} value={category?.id}>
+                        {category?.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                >
+                  Register
+                </Button>
+              </Form>
+            </div>
+            <Link to="/adminSignup">
+              <p style={{ textAlign: "center" }}>Register as Admin</p>
+            </Link>
+            <Link to="/forgotPassword">
+              <p style={{ textAlign: "center" }}>Forgot password</p>
+            </Link>
+          </Flex>
+        </Spin>
       </div>
     </>
   );
