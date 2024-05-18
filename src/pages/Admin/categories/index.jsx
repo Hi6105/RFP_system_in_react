@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, Table, Tag, Button, Spin } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Flex, Table, Tag, Button, Spin, Space } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { fetchCategories } from "../../../helper/Fetchdata";
+import { useTranslation } from "react-i18next";
+import { PAGES } from "../../../constants";
 
 // Defining the configuration for the columns of the category table.
 const columns = [
@@ -34,6 +36,7 @@ const AdminCategories = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [spinning, setSpinning] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const data = [];
@@ -72,8 +75,18 @@ const AdminCategories = () => {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
-        <h1>Categories</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <h1>{t("sidebar.categories")}</h1>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminCategories}>
+              {PAGES?.category}
+            </Link>
+          </Flex>
+        </div>
       </div>
       <Content
         style={{
@@ -93,9 +106,9 @@ const AdminCategories = () => {
             justify="space-between"
             align="center"
           >
-            <h4>Categories</h4>
+            <h4>{t("sidebar.categories")}</h4>
             <Button type="primary" onClick={handleAddCategory}>
-              Add Category
+              {t("app.addCategory")}
             </Button>
           </Flex>
           <Spin tip="Loading..." spinning={spinning}>

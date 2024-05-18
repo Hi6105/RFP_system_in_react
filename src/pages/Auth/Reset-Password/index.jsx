@@ -1,6 +1,6 @@
 import { Flex } from "antd";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, message, Spin } from "antd";
 import { error, success } from "../../../helper/ToastMessages";
 import {
@@ -11,11 +11,24 @@ import {
 } from "../../../constants";
 import AuthServices from "../../../api/services/AuthServices";
 import { APP_ROUTES } from "../../../config/AppConfig";
+import { useTranslation } from "react-i18next";
+import useValidation from "../../../hooks/useValidation";
 
 const ResetPassword = () => {
   const [spinning, setSpinning] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [rules, setValidation] = useValidation();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      email: [{ rule: "required" }, { rule: "email" }],
+      password: [{ rule: "required" }, { rule: "password" }],
+      otp: [{ rule: "digit" }],
+    });
+  }, []);
 
   // Function to authenticate a user through his login credentials
   const onFinish = async (values) => {
@@ -46,8 +59,29 @@ const ResetPassword = () => {
     setSpinning(false);
   };
 
+  const changeLanguage = (lng) => {
+    console.log(lng);
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <>
+      <div
+        style={{
+          display: "flex",
+          padding: "10px",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <Button type="primary" onClick={() => changeLanguage("en")}>
+          EN
+        </Button>
+        <Button type="primary" onClick={() => changeLanguage("fr")}>
+          FR
+        </Button>
+      </div>
       <div
         style={{
           width: "35%",
@@ -72,8 +106,10 @@ const ResetPassword = () => {
                 gap: "10px",
               }}
             >
-              <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
-              <p style={{ color: "#3d8ef8" }}>Reset Password</p>
+              <h4 style={{ color: "#3d8ef8" }}>
+                {t("app.dashboardGreeting")}!
+              </h4>
+              <p style={{ color: "#3d8ef8" }}>{t("app.resetPassword")}</p>
             </div>
             <div key={1} style={{ padding: "4%" }}>
               <Form
@@ -82,32 +118,14 @@ const ResetPassword = () => {
                 layout="vertical"
                 onFinish={onFinish}
               >
-                <Form.Item
-                  name="email"
-                  label="E-mail"
-                  rules={[
-                    {
-                      type: "email",
-                      message: VALIDATION?.email?.invalid,
-                    },
-                    {
-                      required: true,
-                      message: VALIDATION?.email?.required,
-                    },
-                  ]}
-                >
+                <Form.Item name="email" label="E-mail" rules={rules?.email}>
                   <Input />
                 </Form.Item>
 
                 <Form.Item
                   name="password"
                   label="New Password"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.password,
-                    },
-                  ]}
+                  rules={rules?.password}
                   hasFeedback
                 >
                   <Input.Password />
@@ -121,7 +139,7 @@ const ResetPassword = () => {
                   rules={[
                     {
                       required: true,
-                      message: VALIDATION?.confirmpassword?.required,
+                      message: VALIDATION?.required,
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
@@ -137,20 +155,7 @@ const ResetPassword = () => {
                 >
                   <Input.Password />
                 </Form.Item>
-                <Form.Item
-                  name="otp"
-                  label="OTP"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.required,
-                    },
-                    {
-                      pattern: REGEX?.number,
-                      message: VALIDATION?.noofemployees?.match,
-                    },
-                  ]}
-                >
+                <Form.Item name="otp" label="OTP" rules={rules?.otp}>
                   <Input />
                 </Form.Item>
 

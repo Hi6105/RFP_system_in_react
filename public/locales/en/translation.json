@@ -1,0 +1,24 @@
+{
+    "sidebar" : {
+        "dashboard" : "Dashboard",
+        "categories" : "Categories",
+        "vendors" : "Vendors",
+        "rfpList" : "RFP List",
+        "rfpForQuote" : "RFP For Quotes"
+    },
+    "app" :{
+        "welcome" : "Welcome",
+        "dashboardGreeting" : "Welcome to RFP System",
+        "vendorList" : "Vendors List",
+        "addRfp" : "Add RFP",
+        "addCategory" : "Add Category",
+        "signIn" : "Sign in to continue",
+        "registerVendor" : "Register as Vendor",
+        "registerAdmin" : "Register as Admin",
+        "forgotPassword" : "Forgot Password",
+        "password" : "Password",
+        "login" : "Log in",
+        "signup" : "Sign up to Continue",
+        "resetPassword" : "Reset Password"
+    }
+}

@@ -1,16 +1,25 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Flex, message, Spin } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Button, Flex, message, Spin, Space } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../constants";
-import { useNavigate } from "react-router-dom";
+import { API_RESPONSE_TYPE, MESSAGE, PAGES } from "../../../constants";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import CategoryServices from "../../../api/services/CategoryServices";
 import { error, success } from "../../../helper/ToastMessages";
+import useValidation from "../../../hooks/useValidation";
 
 const AddCategory = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
+  const [rules, setValidation] = useValidation();
   const navigate = useNavigate();
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      required: [{ rule: "required" }],
+    });
+  }, []);
 
   const onFinish = async (values) => {
     //setting spinning loader to show
@@ -42,7 +51,19 @@ const AddCategory = () => {
       {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>Add Category</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminCategories}>
+              {PAGES?.category}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }}>{PAGES?.addCategory}</Link>
+          </Flex>
+        </div>
       </div>
       <Spin tip="Loading..." spinning={spinning}>
         <Content
@@ -74,12 +95,7 @@ const AddCategory = () => {
                 <Form.Item
                   label="Category Name"
                   name="name"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.required,
-                    },
-                  ]}
+                  rules={rules?.required}
                 >
                   <Input />
                 </Form.Item>

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { message, Table, Tag, Button, Spin } from "antd";
-import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
+import { message, Table, Tag, Button, Spin, Flex, Space } from "antd";
+import { API_RESPONSE_TYPE, MESSAGE, PAGES } from "../../../constants";
 import VendorServices from "../../../api/services/VendorServices";
 import { approveVendor } from "../../../helper/Fetchdata";
 import { error, success } from "../../../helper/ToastMessages";
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { APP_ROUTES } from "../../../config/AppConfig";
+import { Link } from "react-router-dom";
 
 const fetchVendors = async () => {
   // Fetching all the RFPs
@@ -46,6 +48,7 @@ const VendorList = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
   const [vendors, setVendors] = useState([]);
+  const { t } = useTranslation();
 
   // Defining the configuration for the columns of the rfp table.
   const columns = [
@@ -133,8 +136,18 @@ const VendorList = () => {
     <>
       {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
-        <h1>Vendors List</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <h1>{t("app.vendorList")}</h1>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.vendorList}>
+              {PAGES?.vendor}
+            </Link>
+          </Flex>
+        </div>
       </div>
       <Content
         style={{
@@ -149,7 +162,7 @@ const VendorList = () => {
             borderRadius: "10px",
           }}
         >
-          <h4 style={{ margin: "10px" }}>Vendors</h4>
+          <h4 style={{ margin: "10px" }}>{t("sidebar.vendors")}</h4>
           <Spin tip="Loading..." spinning={spinning}>
             <Table columns={columns} dataSource={vendors} />
           </Spin>

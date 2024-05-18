@@ -1,0 +1,24 @@
+{
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "categories": "Catégories",
+    "vendors": "Vendeurs",
+    "rfpList" : "Liste RFP",
+    "rfpForQuote" : "Pour les devis RFP"
+  },
+  "app": {
+    "welcome": "Bienvenu",
+    "dashboardGreeting" : "Bienvenue dans le système RFP",
+    "vendorList" : "Liste Vendeurs",
+    "addRfp" : "RFP ajouter",
+    "addCategory" : "Catégories ajouter",
+    "signIn" : "Connectez-vous pour continuer",
+    "registerVendor" : "S'inscrire en tant que vendeur",
+    "registerAdmin" : "S'inscrire en tant qu'administrateur",
+    "forgotPassword" : "Mot de passe oublié",
+    "password" : "Mot de passe",
+    "login" : "Se connecter",
+    "signup" : "Inscrivez-vous pour continuer",
+    "resetPassword" : "réinitialiser le mot de passe"
+  }
+}

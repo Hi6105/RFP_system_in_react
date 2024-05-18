@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, message, Table, Tag, Button, Spin } from "antd";
-import { API_RESPONSE_TYPE, MESSAGE } from "../../../constants";
-import { useNavigate } from "react-router-dom";
+import { Flex, message, Table, Tag, Button, Spin, Space } from "antd";
+import { API_RESPONSE_TYPE, MESSAGE, PAGES } from "../../../constants";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import RfpServices from "../../../api/services/RfpServices";
 import { error, success } from "../../../helper/ToastMessages";
 import { useDispatch } from "react-redux";
 import { setItemName, setRfpId } from "../../../redux/slices/rfpSlice";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 //Function to fetch all the RFPs
 const fetchRfps = async () => {
@@ -51,6 +52,7 @@ const RfpList = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [rfps, setRfps] = useState([]);
   const [spinning, setSpinning] = useState(false);
+  const { t } = useTranslation();
 
   // Defining the configuration for the columns of the rfp table.
   const columns = [
@@ -163,8 +165,18 @@ const RfpList = () => {
     <>
       {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
-        <h1>RFP List</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <h1>{t("sidebar.rfpList")}</h1>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.rfpList}>
+              {PAGES?.rfpList}
+            </Link>
+          </Flex>
+        </div>
       </div>
       <Content
         style={{
@@ -186,7 +198,7 @@ const RfpList = () => {
           >
             <h4>RFP</h4>
             <Button type="primary" onClick={handleAddRfp}>
-              + Add RFP
+              {t("app.addRfp")}
             </Button>
           </Flex>
           <Spin tip="Loading..." spinning={spinning}>

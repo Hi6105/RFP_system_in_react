@@ -1,24 +1,34 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Flex, message, Spin, Card } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Button, Flex, message, Spin, Card, Space } from "antd";
 import { Content } from "antd/es/layout/layout";
 import {
   API_RESPONSE_TYPE,
   MESSAGE,
   VALIDATION,
   REGEX,
+  PAGES,
 } from "../../../constants";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { error, success } from "../../../helper/ToastMessages";
 import RfpServices from "../../../api/services/RfpServices";
 import { useSelector } from "react-redux";
+import useValidation from "../../../hooks/useValidation";
 
 const ApplyRfp = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
+  const [rules, setValidation] = useValidation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const rfpId = useSelector((state) => state?.rfp?.selectedRfpId);
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      numeric: [{ rule: "digit" }, { rule: "required" }],
+    });
+  }, []);
 
   // Function to send the data coming through the form into the API
   const onFinish = async (values) => {
@@ -58,7 +68,19 @@ const ApplyRfp = () => {
       {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>Apply RFP</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES.vendorDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.vendorRfpList}>
+              {PAGES?.rfpList}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }}>{PAGES?.applyRfp}</Link>
+          </Flex>
+        </div>
       </div>
       <Spin tip="Loading..." spinning={spinning}>
         <Content
@@ -93,16 +115,7 @@ const ApplyRfp = () => {
                   <Form.Item
                     label="Item Price"
                     name="itemPrice"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                      {
-                        pattern: REGEX?.number,
-                        message: VALIDATION?.numeric,
-                      },
-                    ]}
+                    rules={rules?.numeric}
                   >
                     <Input />
                   </Form.Item>
@@ -110,16 +123,7 @@ const ApplyRfp = () => {
                   <Form.Item
                     label="Total Cost"
                     name="totalCost"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                      {
-                        pattern: REGEX?.number,
-                        message: VALIDATION?.numeric,
-                      },
-                    ]}
+                    rules={rules?.numeric}
                   >
                     <Input />
                   </Form.Item>

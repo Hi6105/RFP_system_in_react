@@ -1,16 +1,28 @@
 import { Flex } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Form, Input, message, Spin } from "antd";
 import { error, success } from "../../../helper/ToastMessages";
 import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../constants";
 import AuthServices from "../../../api/services/AuthServices";
 import { APP_ROUTES } from "../../../config/AppConfig";
+import { useTranslation } from "react-i18next";
+import { LockOutlined } from "@ant-design/icons";
+import useValidation from "../../../hooks/useValidation";
 
 const ForgotPassword = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
+  const [rules, setValidation] = useValidation();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      email: [{ rule: "required" }, { rule: "email" }],
+    });
+  }, []);
 
   // Function to authenticate a user through his login credentials
   const onFinish = async (values) => {
@@ -32,8 +44,29 @@ const ForgotPassword = () => {
     setSpinning(false);
   };
 
+  const changeLanguage = (lng) => {
+    console.log(lng);
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <>
+      <div
+        style={{
+          display: "flex",
+          padding: "10px",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <Button type="primary" onClick={() => changeLanguage("en")}>
+          EN
+        </Button>
+        <Button type="primary" onClick={() => changeLanguage("fr")}>
+          FR
+        </Button>
+      </div>
       <div
         style={{
           width: "35%",
@@ -58,8 +91,10 @@ const ForgotPassword = () => {
                 gap: "10px",
               }}
             >
-              <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
-              <p style={{ color: "#3d8ef8" }}>Forgot Password</p>
+              <h4 style={{ color: "#3d8ef8" }}>
+                {t("app.dashboardGreeting")}!
+              </h4>
+              <p style={{ color: "#3d8ef8" }}>{t("app.forgotPassword")}</p>
             </div>
             <div key={1} style={{ padding: "4%" }}>
               <Form
@@ -68,20 +103,7 @@ const ForgotPassword = () => {
                 layout="vertical"
                 onFinish={onFinish}
               >
-                <Form.Item
-                  label="E-Mail"
-                  name="email"
-                  rules={[
-                    {
-                      type: "email",
-                      message: VALIDATION?.email?.invalid,
-                    },
-                    {
-                      required: true,
-                      message: VALIDATION?.email?.required,
-                    },
-                  ]}
-                >
+                <Form.Item label="E-Mail" name="email" rules={rules?.email}>
                   <Input />
                 </Form.Item>
 
@@ -97,7 +119,17 @@ const ForgotPassword = () => {
               </Form>
             </div>
             <Link to="/vendorSignup">
-              <p style={{ textAlign: "center" }}>Register as Vendor</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <LockOutlined />
+                <p style={{ textAlign: "center" }}>{t("app.registerVendor")}</p>
+              </div>
             </Link>
           </Flex>
         </Spin>

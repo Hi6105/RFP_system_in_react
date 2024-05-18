@@ -62,6 +62,18 @@ export const MESSAGE = {
     passwordReset : "Your Password is successfully changed!",
 };
 
+//redirection links on pages
+export const PAGES = {
+  dashboard : "Home",
+  rfpList : "RFP List",
+  addRfp : "Add RFP",
+  rfpQuote : "RFP Quotes",
+  vendor : "Vendor List",
+  category : "Categories",
+  addCategory : "Add Category",
+  applyRfp : "Apply RFP",
+}
+
 // User Type Constants
 export const USER_TYPE = {
   ADMIN: "admin",

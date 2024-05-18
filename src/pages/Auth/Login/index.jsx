@@ -1,18 +1,30 @@
 import { Flex } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, message, Spin } from "antd";
+import { Button, Form, Input, message, Spin } from "antd";
 import "./loginPage.css";
 import { error } from "../../../helper/ToastMessages";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../constants";
 import AuthServices from "../../../api/services/AuthServices";
+import { useTranslation } from "react-i18next";
+import useValidation from "../../../hooks/useValidation";
 
 const Login = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
   const navigate = useNavigate();
+  const [rules, setValidation] = useValidation();
+  const { t, i18n } = useTranslation();
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      email: [{ rule: "required" }, { rule: "email" }],
+      password: [{ rule: "required" }],
+    });
+  }, []);
 
   // Function to authenticate a user through his login credentials
   const onFinish = async (values) => {
@@ -21,17 +33,17 @@ const Login = () => {
     // Calling the login API service for authentication
     const response = await AuthServices.login(values);
     if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
-      console.log(response);
       // Saving token and user data to local storage
       localStorage.setItem("token", response?.data?.token);
-      localStorage.setItem("userId", response?.data?.user_id);
-      localStorage.setItem("type", response?.data?.type);
-      localStorage.setItem("user", {
-        type: response?.data?.type,
-        user_id: response?.data?.user_id,
-        name: response?.data?.name,
-        email: response?.data?.email,
-      });
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          type: response?.data?.type,
+          user_id: response?.data?.user_id,
+          name: response?.data?.name,
+          email: response?.data?.email,
+        })
+      );
       // Navigate to admin dashboard route
       if (response?.data?.type === "admin")
         navigate(APP_ROUTES?.adminDashboard);
@@ -46,8 +58,29 @@ const Login = () => {
     setSpinning(false);
   };
 
+  const changeLanguage = (lng) => {
+    console.log(lng);
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <>
+      <div
+        style={{
+          display: "flex",
+          padding: "10px",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <Button type="primary" onClick={() => changeLanguage("en")}>
+          EN
+        </Button>
+        <Button type="primary" onClick={() => changeLanguage("fr")}>
+          FR
+        </Button>
+      </div>
       <div
         style={{
           width: "35%",
@@ -72,8 +105,10 @@ const Login = () => {
                 gap: "10px",
               }}
             >
-              <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
-              <p style={{ color: "#3d8ef8" }}>Sign in to continue</p>
+              <h4 style={{ color: "#3d8ef8" }}>
+                {t("app.dashboardGreeting")}!
+              </h4>
+              <p style={{ color: "#3d8ef8" }}>{t("app.signIn")}</p>
             </div>
             <div key={1} style={{ padding: "4%" }}>
               <Form
@@ -84,37 +119,16 @@ const Login = () => {
                 }}
                 onFinish={onFinish}
               >
-                <Form.Item
-                  name="email"
-                  rules={[
-                    {
-                      type: "email",
-                      message: VALIDATION?.email?.invalid,
-                    },
-                    {
-                      required: true,
-                      message: VALIDATION?.email?.required,
-                    },
-                  ]}
-                >
+                <Form.Item name="email" rules={rules?.email}>
                   <Input
                     prefix={<UserOutlined className="site-form-item-icon" />}
                     placeholder="Email"
                   />
                 </Form.Item>
-                <Form.Item
-                  name="password"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.password,
-                    },
-                  ]}
-                >
-                  <Input
+                <Form.Item name="password" rules={rules?.password}>
+                  <Input.Password
                     prefix={<LockOutlined className="site-form-item-icon" />}
-                    type="password"
-                    placeholder="Password"
+                    placeholder={t("app.password")}
                   />
                 </Form.Item>
 
@@ -124,19 +138,47 @@ const Login = () => {
                     htmlType="submit"
                     className="login-form-button"
                   >
-                    Log in
+                    {t("app.login")}
                   </Button>
                 </Form.Item>
               </Form>
             </div>
             <Link to="/vendorSignup">
-              <p style={{ textAlign: "center" }}>Register as Vendor</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                }}
+              >
+                <LockOutlined />
+                <p style={{ textAlign: "center" }}>{t("app.registerVendor")}</p>
+              </div>
             </Link>
             <Link to="/adminSignup">
-              <p style={{ textAlign: "center" }}>Register as Admin</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                }}
+              >
+                <LockOutlined />
+                <p style={{ textAlign: "center" }}>{t("app.registerAdmin")}</p>
+              </div>
             </Link>
             <Link to="/forgotPassword">
-              <p style={{ textAlign: "center" }}>Forgot password</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <LockOutlined />
+                <p style={{ textAlign: "center" }}>{t("app.forgotPassword")}</p>
+              </div>
             </Link>
           </Flex>
         </Spin>

@@ -1,5 +1,5 @@
 import { Flex } from "antd";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, Input, message, Spin } from "antd";
 import {
   API_RESPONSE_TYPE,
@@ -11,6 +11,9 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthServices from "../../../../api/services/AuthServices";
 import { error, success } from "../../../../helper/ToastMessages";
 import { APP_ROUTES } from "../../../../config/AppConfig";
+import { useTranslation } from "react-i18next";
+import { LockOutlined } from "@ant-design/icons";
+import useValidation from "../../../../hooks/useValidation";
 
 const formItemLayout = {
   labelCol: {
@@ -34,8 +37,22 @@ const formItemLayout = {
 const AdminSignup = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
+  const [rules, setValidation] = useValidation();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const { t, i18n } = useTranslation();
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      email: [{ rule: "required" }, { rule: "email" }],
+      password: [{ rule: "required" }, { rule: "password" }],
+      firstName: [{ rule: "firstName" }],
+      lastName: [{ rule: "lastName" }],
+      required: [{ rule: "required" }],
+      phoneNumber: [{ rule: "required" }, { rule: "mobile" }],
+    });
+  }, []);
 
   const onFinish = async (values) => {
     //setting spinning loader to show
@@ -65,9 +82,30 @@ const AdminSignup = () => {
     setSpinning(false);
   };
 
+  const changeLanguage = (lng) => {
+    console.log(lng);
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <>
       {contextHolder}
+      <div
+        style={{
+          display: "flex",
+          padding: "10px",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          gap: "10px",
+        }}
+      >
+        <Button type="primary" onClick={() => changeLanguage("en")}>
+          EN
+        </Button>
+        <Button type="primary" onClick={() => changeLanguage("fr")}>
+          FR
+        </Button>
+      </div>
       <div
         style={{
           width: "35%",
@@ -92,8 +130,10 @@ const AdminSignup = () => {
                 gap: "10px",
               }}
             >
-              <h4 style={{ color: "#3d8ef8" }}>Welcome to RFP System!</h4>
-              <p style={{ color: "#3d8ef8" }}>Sign up to continue</p>
+              <h4 style={{ color: "#3d8ef8" }}>
+                {t("app.dashboardGreeting")}!
+              </h4>
+              <p style={{ color: "#3d8ef8" }}>{t("app.signup")}</p>
             </div>
             <div key={1} style={{ padding: "4%" }}>
               <Form
@@ -113,12 +153,7 @@ const AdminSignup = () => {
                 <Form.Item
                   name="firstName"
                   label="First Name"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.firstname,
-                    },
-                  ]}
+                  rules={rules?.firstName}
                 >
                   <Input />
                 </Form.Item>
@@ -126,46 +161,19 @@ const AdminSignup = () => {
                 <Form.Item
                   name="lastName"
                   label="Last Name"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.lastname,
-                    },
-                  ]}
+                  rules={rules?.lastName}
                 >
                   <Input />
                 </Form.Item>
 
-                <Form.Item
-                  name="email"
-                  label="E-mail"
-                  rules={[
-                    {
-                      type: "email",
-                      message: VALIDATION?.email?.invalid,
-                    },
-                    {
-                      required: true,
-                      message: VALIDATION?.email?.required,
-                    },
-                  ]}
-                >
+                <Form.Item name="email" label="E-mail" rules={rules?.email}>
                   <Input />
                 </Form.Item>
 
                 <Form.Item
                   name="password"
                   label="Password"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.password,
-                    },
-                    {
-                      pattern: REGEX?.password,
-                      message: VALIDATION?.passwordLength,
-                    },
-                  ]}
+                  rules={rules?.password}
                   hasFeedback
                 >
                   <Input.Password />
@@ -179,7 +187,7 @@ const AdminSignup = () => {
                   rules={[
                     {
                       required: true,
-                      message: VALIDATION?.confirmpassword?.required,
+                      message: VALIDATION?.required,
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
@@ -199,16 +207,7 @@ const AdminSignup = () => {
                 <Form.Item
                   name="phoneNo"
                   label="Phone Number"
-                  rules={[
-                    {
-                      required: true,
-                      message: VALIDATION?.phone?.required,
-                    },
-                    {
-                      pattern: REGEX?.phoneNo,
-                      message: VALIDATION?.phone?.match,
-                    },
-                  ]}
+                  rules={rules?.phoneNumber}
                 >
                   <Input />
                 </Form.Item>
@@ -224,10 +223,29 @@ const AdminSignup = () => {
             </div>
 
             <Link to="/vendorSignup">
-              <p style={{ textAlign: "center" }}>Register as Vendor</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                }}
+              >
+                <LockOutlined />
+                <p style={{ textAlign: "center" }}>{t("app.registerVendor")}</p>
+              </div>
             </Link>
             <Link to="/forgotPassword">
-              <p style={{ textAlign: "center" }}>Forgot password</p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                  marginBottom: "10px",
+                }}
+              >
+                <LockOutlined />
+                <p style={{ textAlign: "center" }}>{t("app.forgotPassword")}</p>
+              </div>
             </Link>
           </Flex>
         </Spin>

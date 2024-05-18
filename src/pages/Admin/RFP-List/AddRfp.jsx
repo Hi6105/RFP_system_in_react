@@ -9,15 +9,11 @@ import {
   Card,
   Spin,
   DatePicker,
+  Space,
 } from "antd";
 import { Content } from "antd/es/layout/layout";
-import {
-  API_RESPONSE_TYPE,
-  MESSAGE,
-  VALIDATION,
-  REGEX,
-} from "../../../constants";
-import { useNavigate } from "react-router-dom";
+import { API_RESPONSE_TYPE, MESSAGE, PAGES } from "../../../constants";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { error, success } from "../../../helper/ToastMessages";
 import {
@@ -27,14 +23,25 @@ import {
 } from "../../../helper/Fetchdata";
 import VendorServices from "../../../api/services/VendorServices";
 import RfpServices from "../../../api/services/RfpServices";
+import useValidation from "../../../hooks/useValidation";
 
 const AddRfp = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [categories, setCategories] = useState({});
   const [spinning, setSpinning] = useState(false);
   const [vendors, setVendors] = useState([]);
+  const [rules, setValidation] = useValidation();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  //setting validations in the form
+  useEffect(() => {
+    setValidation({
+      required: [{ rule: "required" }],
+      vendor: [{ rule: "arrayLengthGreaterThan0" }],
+      numeric: [{ rule: "digit" }, { rule: "required" }],
+    });
+  }, []);
 
   useEffect(() => {
     // Storing data of categories from API fetch
@@ -51,7 +58,8 @@ const AddRfp = () => {
     //setting spinning loader to show
     setSpinning(true);
     //Fetching user data from local storage
-    const user = localStorage.getItem("user");
+    const userString = localStorage.getItem("user");
+    const user = JSON.parse(userString);
 
     //Formulating the data that would be sent into the API
     const data = {
@@ -122,7 +130,19 @@ const AddRfp = () => {
       {contextHolder}
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>RFP Create</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.rfpList}>
+              {PAGES?.rfpList}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }}>{PAGES?.addRfp}</Link>
+          </Flex>
+        </div>
       </div>
       <Spin tip="Loading..." spinning={spinning}>
         <Content
@@ -157,12 +177,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Select Category"
                     name="category"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.categories,
-                      },
-                    ]}
+                    rules={rules?.required}
                   >
                     <Select onChange={handleChange}>
                       {Object.values(categories).map((category) => (
@@ -176,12 +191,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Item Name"
                     name="itemName"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                    ]}
+                    rules={rules?.required}
                   >
                     <Input />
                   </Form.Item>
@@ -189,12 +199,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Item Description"
                     name="itemDescription"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                    ]}
+                    rules={rules?.required}
                   >
                     <Input />
                   </Form.Item>
@@ -202,16 +207,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Quantity"
                     name="quantity"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                      {
-                        pattern: REGEX?.number,
-                        message: VALIDATION?.numeric,
-                      },
-                    ]}
+                    rules={rules?.numeric}
                   >
                     <Input />
                   </Form.Item>
@@ -219,12 +215,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Last Date"
                     name="lastdate"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                    ]}
+                    rules={rules?.required}
                   >
                     <DatePicker />
                   </Form.Item>
@@ -232,16 +223,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Minimum Price"
                     name="minPrice"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                      {
-                        pattern: REGEX?.number,
-                        message: VALIDATION?.numeric,
-                      },
-                    ]}
+                    rules={rules.numeric}
                   >
                     <Input />
                   </Form.Item>
@@ -249,16 +231,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Maximum Price"
                     name="maxPrice"
-                    rules={[
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                      {
-                        pattern: REGEX?.number,
-                        message: VALIDATION?.numeric,
-                      },
-                    ]}
+                    rules={rules.numeric}
                   >
                     <Input />
                   </Form.Item>
@@ -266,16 +239,7 @@ const AddRfp = () => {
                   <Form.Item
                     label="Vendors"
                     name="vendors"
-                    rules={[
-                      {
-                        required: vendors.length > 0 ? false : true,
-                        message: VALIDATION?.rfpVendorSelect,
-                      },
-                      {
-                        required: true,
-                        message: VALIDATION?.required,
-                      },
-                    ]}
+                    rules={rules?.vendor}
                   >
                     <Select
                       mode="multiple"

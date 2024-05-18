@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, Table, Tag, Spin, Button } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Flex, Table, Tag, Spin, Button, Space } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { useDispatch } from "react-redux";
 import { setRfpId } from "../../../redux/slices/rfpSlice";
 import { getRfpByUserId } from "../../../helper/Fetchdata";
+import { useTranslation } from "react-i18next";
+import { PAGES } from "../../../constants";
 
 const RfpForQuotes = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [rfps, setRfps] = useState([]);
   const [spinning, setSpinning] = useState(false);
-
+  const { t } = useTranslation();
   // Defining the configuration for the columns of the rfp table.
   const columns = [
     {
@@ -73,7 +75,10 @@ const RfpForQuotes = () => {
       setSpinning(true);
 
       //fetching user id from local storage to formulate data for the API
-      const userId = localStorage.getItem("userId");
+      const userString = localStorage.getItem("user");
+      const user = JSON.parse(userString);
+      const userId = user?.user_id;
+
       const data = {
         userId: userId,
       };
@@ -101,8 +106,18 @@ const RfpForQuotes = () => {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
-        <h1>RFP List</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <h1>{t("sidebar.rfpList")}</h1>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.vendorDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.vendorRfpList}>
+              {PAGES?.rfpList}
+            </Link>
+          </Flex>
+        </div>
       </div>
       <Content
         style={{

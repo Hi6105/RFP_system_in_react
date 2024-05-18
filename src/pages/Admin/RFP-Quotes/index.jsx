@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Table, Spin } from "antd";
+import { Table, Spin, Flex, Space } from "antd";
 import { fetchQuotes } from "../../../helper/Fetchdata";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { APP_ROUTES } from "../../../config/AppConfig";
+import { PAGES } from "../../../constants";
 
 const RfpQuotesList = () => {
   //Fetching data of RFP id and corresponding item name from the redux store.
@@ -79,7 +82,19 @@ const RfpQuotesList = () => {
     <>
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
         <h1>RFP Quotes</h1>
-        <p style={{ marginLeft: "auto" }}>Home</p>
+        <div style={{ marginLeft: "auto" }}>
+          <Flex gap="middle">
+            <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
+              {PAGES?.dashboard}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }} to={APP_ROUTES?.rfpList}>
+              {PAGES?.rfpList}
+            </Link>
+            <Space>/</Space>
+            <Link style={{ color: "black" }}>{PAGES?.rfpQuote}</Link>
+          </Flex>
+        </div>
       </div>
       <Content
         style={{
