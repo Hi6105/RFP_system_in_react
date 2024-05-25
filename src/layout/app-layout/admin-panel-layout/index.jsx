@@ -4,12 +4,15 @@ import { Layout, Menu, theme, Button } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../../../redux/slices/auth";
 const { Header, Sider } = Layout;
 
 const AdminPanelLayout = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState("1");
+  const dispatch = useDispatch();
 
   const userString = localStorage.getItem("user");
   const user = JSON.parse(userString);
@@ -44,12 +47,18 @@ const AdminPanelLayout = () => {
 
   const handleMenuClick = ({ key }) => {
     setSelectedKey(key); // Update selected key state
-    // You can also perform additional actions, such as navigation, based on the selected key
     navigate(key);
   };
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
+  };
+
+  // Funtion to destroy token from redux and local storage
+  const handleLogout = () => {
+    dispatch(setToken(null));
+    dispatch(setUser(null));
+    navigate("/");
   };
 
   return (
@@ -98,7 +107,10 @@ const AdminPanelLayout = () => {
               gap: "10px",
             }}
           >
-            {t("app.welcome")} {name} <a href="/">Logout</a>
+            {t("app.welcome")} {name}{" "}
+            <Button type="link" onClick={handleLogout}>
+              Logout
+            </Button>
             <Button type="primary" onClick={() => changeLanguage("en")}>
               EN
             </Button>

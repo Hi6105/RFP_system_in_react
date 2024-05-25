@@ -4,7 +4,6 @@ import { Button, Form, Input, message, Spin } from "antd";
 import {
   API_RESPONSE_TYPE,
   MESSAGE,
-  REGEX,
   VALIDATION,
 } from "../../../../constants";
 import { Link, useNavigate } from "react-router-dom";

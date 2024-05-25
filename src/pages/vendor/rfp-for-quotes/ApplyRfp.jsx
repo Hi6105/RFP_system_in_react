@@ -4,8 +4,6 @@ import { Content } from "antd/es/layout/layout";
 import {
   API_RESPONSE_TYPE,
   MESSAGE,
-  VALIDATION,
-  REGEX,
   PAGES,
 } from "../../../constants";
 import { Link, useNavigate } from "react-router-dom";

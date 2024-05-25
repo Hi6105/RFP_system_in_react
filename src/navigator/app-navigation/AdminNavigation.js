@@ -13,7 +13,7 @@ const VendorList = lazy(() => import("../../pages/Admin/Vendor-List"));
 const RfpQuotesList = lazy(() => import("../../pages/Admin/RFP-Quotes"));
 const AdminDashboard = lazy(() => import("../../pages/Admin/dashboard"));
 
-export const adminRoutes = {
+export const AdminRoutes = {
   path: `${APP_ROUTES.admin}`,
   element: (
     <Suspense fallback={"loading"}>

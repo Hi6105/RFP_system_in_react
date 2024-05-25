@@ -10,13 +10,16 @@ import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../constants";
 import AuthServices from "../../../api/services/AuthServices";
 import { useTranslation } from "react-i18next";
 import useValidation from "../../../hooks/useValidation";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../../../redux/slices/auth";
 
 const Login = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [spinning, setSpinning] = useState(false);
-  const navigate = useNavigate();
   const [rules, setValidation] = useValidation();
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //setting validations in the form
   useEffect(() => {
@@ -33,6 +36,17 @@ const Login = () => {
     // Calling the login API service for authentication
     const response = await AuthServices.login(values);
     if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
+      // Storing token and user details in the redux store to use it in route protection
+      dispatch(setToken(response?.data?.token));
+      dispatch(
+        setUser({
+          type: response?.data?.type,
+          user_id: response?.data?.user_id,
+          name: response?.data?.name,
+          email: response?.data?.email,
+        })
+      );
+
       // Saving token and user data to local storage
       localStorage.setItem("token", response?.data?.token);
       localStorage.setItem(

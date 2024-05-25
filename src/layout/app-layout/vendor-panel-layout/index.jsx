@@ -4,12 +4,15 @@ import { Layout, Menu, theme, Button } from "antd";
 import { Outlet, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { setToken, setUser } from "../../../redux/slices/auth";
 const { Header, Sider } = Layout;
 
 const VendorPanelLayout = () => {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState("1");
   const { t, i18n } = useTranslation();
+  const dispatch = useDispatch();
 
   const items = [
     {
@@ -40,6 +43,13 @@ const VendorPanelLayout = () => {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
+  };
+
+  //Function to delete token and user details from local storage and redux store on logout.
+  const handleLogout = () => {
+    dispatch(setToken(null));
+    dispatch(setUser(null));
+    navigate("/");
   };
 
   return (
@@ -88,7 +98,10 @@ const VendorPanelLayout = () => {
               gap: "10px",
             }}
           >
-            {t("app.welcome")} {name} <a href="/">Logout</a>
+            {t("app.welcome")} {name}{" "}
+            <Button type="link" onClick={handleLogout}>
+              Logout
+            </Button>
             <Button type="primary" onClick={() => changeLanguage("en")}>
               EN
             </Button>
