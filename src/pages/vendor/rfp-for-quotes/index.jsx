@@ -18,32 +18,32 @@ const RfpForQuotes = () => {
   // Defining the configuration for the columns of the rfp table.
   const columns = [
     {
-      title: "RFP No.",
+      title: t("app.rfpNo"),
       dataIndex: "rfp_id",
       key: "rfp_id",
     },
     {
-      title: "RFP Title",
+      title: t("app.rfpTitle"),
       dataIndex: "item_name",
       key: "item_name",
     },
     {
-      title: "RFP Last Date",
+      title: t("app.rfpLastDate"),
       dataIndex: "last_date",
       key: "last_date",
     },
     {
-      title: "Min Amount",
+      title: t("app.minimumPrice"),
       dataIndex: "minimum_price",
       key: "minimum_price",
     },
     {
-      title: "Max Amount",
+      title: t("app.maximumPrice"),
       dataIndex: "maximum_price",
       key: "maximum_price",
     },
     {
-      title: "Status",
+      title: t("app.status"),
       dataIndex: "status",
       key: "status",
       render: (text) =>
@@ -54,7 +54,7 @@ const RfpForQuotes = () => {
         ),
     },
     {
-      title: "Action",
+      title: t("app.action"),
       key: "action",
       dataIndex: "action",
       render: (text, record) =>

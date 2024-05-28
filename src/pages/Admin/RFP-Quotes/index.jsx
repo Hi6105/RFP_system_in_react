@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { PAGES } from "../../../constants";
+import { t } from "i18next";
 
 const RfpQuotesList = () => {
   //Fetching data of RFP id and corresponding item name from the redux store.
@@ -17,27 +18,27 @@ const RfpQuotesList = () => {
   // Defining the configuration for the columns of the rfp table.
   const columns = [
     {
-      title: "S.No.",
+      title: t("app.serialNumber"),
       dataIndex: "sNo",
       key: "sNo",
     },
     {
-      title: "Item Name",
+      title: t("app.itemName"),
       dataIndex: "itemName",
       key: "itemName",
     },
     {
-      title: "Vendor Id",
+      title: t("app.vendorId"),
       dataIndex: "vendorId",
       key: "vendorId",
     },
     {
-      title: "Vendor Price",
+      title: t("app.vendorPrice"),
       dataIndex: "vendorPrice",
       key: "vendorPrice",
     },
     {
-      title: "Total Price",
+      title: t("app.totalPrice"),
       dataIndex: "totalPrice",
       key: "totalPrice",
     },
@@ -81,7 +82,7 @@ const RfpQuotesList = () => {
   return (
     <>
       <div style={{ display: "flex", alignItems: "center", padding: "10px" }}>
-        <h1>RFP Quotes</h1>
+        <h1>{t("app.rfpQuotes")}</h1>
         <div style={{ marginLeft: "auto" }}>
           <Flex gap="middle">
             <Link style={{ color: "black" }} to={APP_ROUTES?.adminDashboard}>
@@ -109,7 +110,7 @@ const RfpQuotesList = () => {
             borderRadius: "10px",
           }}
         >
-          <h4 style={{ margin: "10px" }}>RFP Quotes</h4>
+          <h4 style={{ margin: "10px" }}>{t("app.rfpQuotes")}</h4>
           <Spin tip="Loading..." spinning={spinning}>
             <Table columns={columns} dataSource={quotes} />
           </Spin>

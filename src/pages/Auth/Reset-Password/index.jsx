@@ -124,7 +124,7 @@ const ResetPassword = () => {
 
                 <Form.Item
                   name="password"
-                  label="New Password"
+                  label={t("app.newPassword")}
                   rules={rules?.password}
                   hasFeedback
                 >
@@ -133,7 +133,7 @@ const ResetPassword = () => {
 
                 <Form.Item
                   name="confirm"
-                  label="Confirm Password"
+                  label={t("app.confirmPassword")}
                   dependencies={["password"]}
                   hasFeedback
                   rules={[
@@ -165,7 +165,7 @@ const ResetPassword = () => {
                     htmlType="submit"
                     className="login-form-button"
                   >
-                    Submit
+                    {t("app.submit")}
                   </Button>
                 </Form.Item>
               </Form>

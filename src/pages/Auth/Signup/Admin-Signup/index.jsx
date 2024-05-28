@@ -1,11 +1,7 @@
 import { Flex } from "antd";
 import React, { useState, useEffect } from "react";
 import { Button, Form, Input, message, Spin } from "antd";
-import {
-  API_RESPONSE_TYPE,
-  MESSAGE,
-  VALIDATION,
-} from "../../../../constants";
+import { API_RESPONSE_TYPE, MESSAGE, VALIDATION } from "../../../../constants";
 import { Link, useNavigate } from "react-router-dom";
 import AuthServices from "../../../../api/services/AuthServices";
 import { error, success } from "../../../../helper/ToastMessages";
@@ -46,8 +42,8 @@ const AdminSignup = () => {
     setValidation({
       email: [{ rule: "required" }, { rule: "email" }],
       password: [{ rule: "required" }, { rule: "password" }],
-      firstName: [{ rule: "firstName" }],
-      lastName: [{ rule: "lastName" }],
+      firstName: [{ rule: "firstName" }, { rule: "required" }],
+      lastName: [{ rule: "lastName" }, { rule: "required" }],
       required: [{ rule: "required" }],
       phoneNumber: [{ rule: "required" }, { rule: "mobile" }],
     });
@@ -151,7 +147,7 @@ const AdminSignup = () => {
               >
                 <Form.Item
                   name="firstName"
-                  label="First Name"
+                  label={t("app.firstName")}
                   rules={rules?.firstName}
                 >
                   <Input />
@@ -159,19 +155,23 @@ const AdminSignup = () => {
 
                 <Form.Item
                   name="lastName"
-                  label="Last Name"
+                  label={t("app.lastName")}
                   rules={rules?.lastName}
                 >
                   <Input />
                 </Form.Item>
 
-                <Form.Item name="email" label="E-mail" rules={rules?.email}>
+                <Form.Item
+                  name="email"
+                  label={t("app.email")}
+                  rules={rules?.email}
+                >
                   <Input />
                 </Form.Item>
 
                 <Form.Item
                   name="password"
-                  label="Password"
+                  label={t("app.password")}
                   rules={rules?.password}
                   hasFeedback
                 >
@@ -180,7 +180,7 @@ const AdminSignup = () => {
 
                 <Form.Item
                   name="confirm"
-                  label="Confirm Password"
+                  label={t("app.confirmPassword")}
                   dependencies={["password"]}
                   hasFeedback
                   rules={[
@@ -205,7 +205,7 @@ const AdminSignup = () => {
 
                 <Form.Item
                   name="phoneNo"
-                  label="Phone Number"
+                  label={t("app.phoneNumber")}
                   rules={rules?.phoneNumber}
                 >
                   <Input />
@@ -216,7 +216,7 @@ const AdminSignup = () => {
                   htmlType="submit"
                   className="login-form-button"
                 >
-                  Sign Up
+                  {t("app.signUp")}
                 </Button>
               </Form>
             </div>

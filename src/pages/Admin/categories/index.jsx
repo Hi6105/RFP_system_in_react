@@ -6,21 +6,22 @@ import { APP_ROUTES } from "../../../config/AppConfig";
 import { fetchCategories } from "../../../helper/Fetchdata";
 import { useTranslation } from "react-i18next";
 import { PAGES } from "../../../constants";
+import { t } from "i18next";
 
 // Defining the configuration for the columns of the category table.
 const columns = [
   {
-    title: "S.No.",
+    title: t("app.serialNumber"),
     dataIndex: "sNo",
     key: "sNo",
   },
   {
-    title: "Category",
+    title: t("Category"),
     dataIndex: "category",
     key: "category",
   },
   {
-    title: "Status",
+    title: t("app.status"),
     dataIndex: "status",
     key: "status",
     render: (text) =>

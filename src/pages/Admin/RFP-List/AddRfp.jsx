@@ -16,14 +16,15 @@ import { API_RESPONSE_TYPE, MESSAGE, PAGES } from "../../../constants";
 import { Link, useNavigate } from "react-router-dom";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { error, success } from "../../../helper/ToastMessages";
+import { fetchCategories } from "../../../helper/Fetchdata";
 import {
   arrayToCommaSeparatedString,
-  fetchCategories,
   generateRandomString,
-} from "../../../helper/Fetchdata";
+} from "../../../helper/Global.js";
 import VendorServices from "../../../api/services/VendorServices";
 import RfpServices from "../../../api/services/RfpServices";
 import useValidation from "../../../hooks/useValidation";
+import { t } from "i18next";
 
 const AddRfp = () => {
   const [messageApi, contextHolder] = message.useMessage();
@@ -55,41 +56,47 @@ const AddRfp = () => {
 
   // Function to send the data coming through the form into the API
   const onFinish = async (values) => {
-    //setting spinning loader to show
-    setSpinning(true);
-    //Fetching user data from local storage
-    const userString = localStorage.getItem("user");
-    const user = JSON.parse(userString);
+    setSpinning(true); // setting spinning loader to show
 
-    //Formulating the data that would be sent into the API
-    const data = {
-      user_id: user?.user_id,
-      item_name: values?.itemName,
-      rfp_no: generateRandomString(), // generating a random string for rfp_no
-      quantity: values?.quantity,
-      last_date: values?.lastdate.toISOString(), // converting the date recieved from the form into iso format
-      minimum_price: values?.minPrice,
-      maximum_price: values?.maxPrice,
-      categories: values?.category,
-      vendors: arrayToCommaSeparatedString(values?.vendors), // converting array of vendor ids into a comma separated string
-      item_description: values?.itemDescription,
-    };
+    try {
+      // Fetching user data from local storage
+      const userString = localStorage.getItem("user");
+      const user = JSON.parse(userString);
 
-    // Calling the API for creating a new RFP
-    const response = await RfpServices.addRfp(data);
+      // Formulating the data that would be sent into the API
+      const data = {
+        user_id: user?.user_id,
+        item_name: values?.itemName,
+        rfp_no: generateRandomString(), // generating a random string for rfp_no
+        quantity: values?.quantity,
+        last_date: values?.lastdate.toISOString(), // converting the date received from the form into ISO format
+        minimum_price: values?.minPrice,
+        maximum_price: values?.maxPrice,
+        categories: values?.category,
+        vendors: arrayToCommaSeparatedString(values?.vendors), // converting array of vendor ids into a comma-separated string
+        item_description: values?.itemDescription,
+      };
 
-    // Based on the response of the API showing toast messages
-    if (response?.data?.response === API_RESPONSE_TYPE.ERROR) {
-      error(response?.data?.errors[0], messageApi);
-    } else {
-      success(MESSAGE?.rfpCreated, messageApi);
-      // Set a timeout to navigate after displaying the success message
-      setTimeout(() => {
-        navigate(APP_ROUTES?.rfpList);
-      }, 2000); // Delay for 2 seconds (2000 milliseconds)
+      // Calling the API for creating a new RFP
+      const response = await RfpServices.addRfp(data);
+
+      // Based on the response of the API showing toast messages
+      if (response?.data?.response === API_RESPONSE_TYPE.ERROR) {
+        error(response?.data?.errors[0], messageApi);
+      } else {
+        success(MESSAGE?.rfpCreated, messageApi);
+        // Set a timeout to navigate after displaying the success message
+        setTimeout(() => {
+          navigate(APP_ROUTES?.rfpList);
+        }, 2000); // Delay for 2 seconds (2000 milliseconds)
+      }
+    } catch (err) {
+      // Handle any unexpected errors
+      error("An unexpected error occurred while creating the RFP.", messageApi);
+      console.error("Error creating RFP:", err);
+    } finally {
+      setSpinning(false); // setting spinning loader to hide
     }
-    //setting spinning loader to hide
-    setSpinning(false);
   };
 
   // Function to handle redirection on cancelling the form submission
@@ -99,29 +106,37 @@ const AddRfp = () => {
 
   // Function to update the vendor list in the form upon selecting a specific category
   const handleChange = async (value) => {
-    // Calling the API for fetching vendor data belonging to a specific category
-    const response = await VendorServices?.getVendorByCategoryId({
-      categoryId: value,
-    });
+    try {
+      // Calling the API for fetching vendor data belonging to a specific category
+      const response = await VendorServices?.getVendorByCategoryId({
+        categoryId: value,
+      });
 
-    // On success response from the API setting vendors data into the vendor state in the appropriate format
-    if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
-      const vendorsData = response?.data?.vendors;
-      let vendorData = [];
+      // On success response from the API setting vendors data into the vendor state in the appropriate format
+      if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
+        const vendorsData = response?.data?.vendors;
+        let vendorData = [];
 
-      //Looping over the recived vendor data and extracting name and id of individual vendor
-      if (vendorsData) {
-        vendorsData.map((vendor) => {
-          //Pushing data into vendorData array
-          vendorData.push({
-            label: vendor?.name,
-            value: vendor?.user_id,
+        // Looping over the received vendor data and extracting name and id of individual vendor
+        if (vendorsData) {
+          vendorsData.map((vendor) => {
+            // Pushing data into vendorData array
+            vendorData.push({
+              label: vendor?.name,
+              value: vendor?.user_id,
+            });
           });
-        });
-      }
+        }
 
-      // Setting the data into vendor state
-      setVendors(vendorData);
+        // Setting the data into vendor state
+        setVendors(vendorData);
+      } else {
+        error("Failed to fetch vendors for the selected category.", messageApi);
+      }
+    } catch (err) {
+      // Handle any unexpected errors
+      error("An unexpected error occurred while fetching vendors.", messageApi);
+      console.error("Error fetching vendors:", err);
     }
   };
 
@@ -175,7 +190,7 @@ const AddRfp = () => {
                   onFinish={onFinish}
                 >
                   <Form.Item
-                    label="Select Category"
+                    label={t("app.selectCategory")}
                     name="category"
                     rules={rules?.required}
                   >
@@ -189,7 +204,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Item Name"
+                    label={t("app.itemName")}
                     name="itemName"
                     rules={rules?.required}
                   >
@@ -197,7 +212,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Item Description"
+                    label={t("app.itemDescription")}
                     name="itemDescription"
                     rules={rules?.required}
                   >
@@ -205,7 +220,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Quantity"
+                    label={t("app.quantity")}
                     name="quantity"
                     rules={rules?.numeric}
                   >
@@ -213,7 +228,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Last Date"
+                    label={t("app.lastDate")}
                     name="lastdate"
                     rules={rules?.required}
                   >
@@ -221,7 +236,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Minimum Price"
+                    label={t("app.minimumPrice")}
                     name="minPrice"
                     rules={rules.numeric}
                   >
@@ -229,7 +244,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Maximum Price"
+                    label={t("app.maximumPrice")}
                     name="maxPrice"
                     rules={rules.numeric}
                   >
@@ -237,7 +252,7 @@ const AddRfp = () => {
                   </Form.Item>
 
                   <Form.Item
-                    label="Vendors"
+                    label={t("app.vendors")}
                     name="vendors"
                     rules={rules?.vendor}
                   >
@@ -255,9 +270,9 @@ const AddRfp = () => {
                   <Form.Item>
                     <Flex justify="flex-end" gap="middle">
                       <Button type="primary" htmlType="submit">
-                        Submit
+                        {t("app.submit")}
                       </Button>
-                      <Button onClick={handleCancel}>Cancel</Button>
+                      <Button onClick={handleCancel}>{t("app.cancel")}</Button>
                     </Flex>
                   </Form.Item>
                 </Form>

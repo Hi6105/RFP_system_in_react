@@ -60,6 +60,7 @@ export const MESSAGE = {
     rfpClosed : "RFP Closed successfully",
     otpSent : "An OTP has been sent on your E-Mail address",
     passwordReset : "Your Password is successfully changed!",
+    notArrayType : "Input should be an array",
 };
 
 //redirection links on pages

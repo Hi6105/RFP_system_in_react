@@ -45,7 +45,6 @@ const ForgotPassword = () => {
   };
 
   const changeLanguage = (lng) => {
-    console.log(lng);
     i18n.changeLanguage(lng);
   };
 
@@ -113,7 +112,7 @@ const ForgotPassword = () => {
                     htmlType="submit"
                     className="login-form-button"
                   >
-                    Send OTP
+                    {t("app.sendOtp")}
                   </Button>
                 </Form.Item>
               </Form>

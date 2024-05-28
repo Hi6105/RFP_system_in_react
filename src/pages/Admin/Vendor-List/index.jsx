@@ -10,36 +10,42 @@ import { APP_ROUTES } from "../../../config/AppConfig";
 import { Link } from "react-router-dom";
 
 const fetchVendors = async () => {
-  // Fetching all the RFPs
-  const response = await VendorServices.getAllVendors();
+  try {
+    // Fetching all the vendors
+    const response = await VendorServices.getAllVendors();
 
-  const data = [];
+    const data = [];
 
-  // Returning data of rfps on success response
-  if (response?.data?.response == API_RESPONSE_TYPE?.SUCCESS) {
-    // Obtaining the data of rfps from the object into an array.
-    const vendors = response?.data?.vendors;
+    // Returning data of vendors on success response
+    if (response?.data?.response === API_RESPONSE_TYPE?.SUCCESS) {
+      // Obtaining the data of vendors from the object into an array.
+      const vendors = response?.data?.vendors;
 
-    let serialNumber = 1;
-    // Iterating over the rfps recieved to formulate data for table rows.
-    vendors.map((vendor) => {
-      data.push({
-        userId: vendor?.user_id,
-        sNo: serialNumber,
-        email: vendor?.email,
-        phoneNo: vendor?.mobile,
-        numberOfEmployees: vendor?.no_of_employees,
-        status: vendor?.status,
-        action: vendor?.status != "Approved" ? "Approve" : "",
+      let serialNumber = 1;
+      // Iterating over the vendors received to formulate data for table rows.
+      vendors.map((vendor) => {
+        data.push({
+          userId: vendor?.user_id,
+          sNo: serialNumber,
+          email: vendor?.email,
+          phoneNo: vendor?.mobile,
+          numberOfEmployees: vendor?.no_of_employees,
+          status: vendor?.status,
+          action: vendor?.status !== "Approved" ? "Approve" : "",
+        });
+
+        serialNumber += 1;
       });
 
-      serialNumber += 1;
-    });
-
-    // Returning the formulated data
-    return data;
-  } else {
-    // If response from the API was not successful returning an empty array.
+      // Returning the formulated data
+      return data;
+    } else {
+      // If response from the API was not successful returning an empty array.
+      return [];
+    }
+  } catch (err) {
+    console.error("Error fetching vendors:", err);
+    // Return an empty array or handle the error as needed
     return [];
   }
 };
@@ -53,27 +59,27 @@ const VendorList = () => {
   // Defining the configuration for the columns of the rfp table.
   const columns = [
     {
-      title: "S.No.",
+      title: t("app.serialNumber"),
       dataIndex: "sNo",
       key: "sNo",
     },
     {
-      title: "Email",
+      title: t("app.email"),
       dataIndex: "email",
       key: "email",
     },
     {
-      title: "Contact No",
+      title: t("app.phoneNumber"),
       dataIndex: "phoneNo",
       key: "phoneNo",
     },
     {
-      title: "Number of Employees",
+      title: t("app.numberOfEmployees"),
       dataIndex: "numberOfEmployees",
       key: "numberOfEmployees",
     },
     {
-      title: "Status",
+      title: t("app.status"),
       dataIndex: "status",
       key: "status",
       render: (text) =>
@@ -84,7 +90,7 @@ const VendorList = () => {
         ),
     },
     {
-      title: "Action",
+      title: t("app.action"),
       key: "action",
       dataIndex: "action",
       render: (text, record) =>

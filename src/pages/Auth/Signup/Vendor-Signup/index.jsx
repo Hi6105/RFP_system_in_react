@@ -45,8 +45,8 @@ const VendorSignup = () => {
     setValidation({
       email: [{ rule: "required" }, { rule: "email" }],
       password: [{ rule: "required" }, { rule: "password" }],
-      firstName: [{ rule: "firstName" }],
-      lastName: [{ rule: "lastName" }],
+      firstName: [{ rule: "firstName" }, { rule: "required" }],
+      lastName: [{ rule: "lastName" }, { rule: "required" }],
       revenue: [{ rule: "required" }, { rule: "revenue" }],
       gstNo: [{ rule: "required" }, { rule: "gstNo" }],
       panNo: [{ rule: "required" }, { rule: "panNo" }],
@@ -170,7 +170,7 @@ const VendorSignup = () => {
               >
                 <Form.Item
                   name="firstName"
-                  label="First Name"
+                  label={t("app.firstName")}
                   rules={rules?.firstName}
                 >
                   <Input />
@@ -178,19 +178,23 @@ const VendorSignup = () => {
 
                 <Form.Item
                   name="lastName"
-                  label="Last Name"
+                  label={t("app.lastName")}
                   rules={rules?.lastName}
                 >
                   <Input />
                 </Form.Item>
 
-                <Form.Item name="email" label="E-mail" rules={rules?.email}>
+                <Form.Item
+                  name="email"
+                  label={t("app.email")}
+                  rules={rules?.email}
+                >
                   <Input />
                 </Form.Item>
 
                 <Form.Item
                   name="password"
-                  label="Password"
+                  label={t("app.password")}
                   rules={rules?.password}
                   hasFeedback
                 >
@@ -199,7 +203,7 @@ const VendorSignup = () => {
 
                 <Form.Item
                   name="confirm"
-                  label="Confirm Password"
+                  label={t("app.confirmPassword")}
                   dependencies={["password"]}
                   hasFeedback
                   rules={[
@@ -232,7 +236,7 @@ const VendorSignup = () => {
 
                 <Form.Item
                   name="numberOfEmployees"
-                  label="No of Employees"
+                  label={t("app.numberOfEmployees")}
                   rules={rules?.numberOfEmployees}
                 >
                   <Input />
@@ -248,7 +252,7 @@ const VendorSignup = () => {
 
                 <Form.Item
                   name="phoneNo"
-                  label="Phone Number"
+                  label={t("app.phoneNumber")}
                   rules={rules?.phoneNumber}
                 >
                   <Input />
@@ -256,7 +260,7 @@ const VendorSignup = () => {
 
                 <Form.Item
                   name="category"
-                  label="Categories"
+                  label={t("sidebar.categories")}
                   rules={rules?.required}
                 >
                   <Select>
@@ -273,7 +277,7 @@ const VendorSignup = () => {
                   htmlType="submit"
                   className="login-form-button"
                 >
-                  Register
+                  {t("app.register")}
                 </Button>
               </Form>
             </div>

@@ -136,7 +136,7 @@ const Login = () => {
                 <Form.Item name="email" rules={rules?.email}>
                   <Input
                     prefix={<UserOutlined className="site-form-item-icon" />}
-                    placeholder="Email"
+                    placeholder={t("app.email")}
                   />
                 </Form.Item>
                 <Form.Item name="password" rules={rules?.password}>

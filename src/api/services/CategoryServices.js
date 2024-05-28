@@ -7,7 +7,7 @@ const CategoryServices = {};
 //service for fetching all the categories.
 CategoryServices.getCategories = async () =>{
     // Retriving the authentication token from the local storage to pass it in the API call
-    const token = localStorage.get
+    const token = localStorage.getItem('token');
     //Defining API route for the request
     let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS.categories}`;
     //Making the request.
