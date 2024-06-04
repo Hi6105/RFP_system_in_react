@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_ENDPOINTS } from "../../config/AppConfig";
+import { API_BASE_URL, API_BASE_URL_SAAS, API_ENDPOINTS } from "../../config/AppConfig";
 import { get, post } from "../ApiHelper";
 
 // This service variable is responsible for providing all the API calls related to vendor functionality
@@ -34,6 +34,18 @@ VendorServices.getVendorByCategoryId = async (data) => {
     const token = localStorage.getItem('token');
     //Defining API route for the request
     let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS.getVendors}/${data?.categoryId}`;
+    //Making the request.
+    const reponse = await get(apiRoute, token);
+    //Returning the response recieved from the API
+    return reponse;
+}
+
+//service for exporting all the vendor belonging to a particular company.
+VendorServices.exportVendors = async () => {
+    // Retriving the authentication token from the local storage to pass it in the API call
+    const token = localStorage.getItem('token');
+    //Defining API route for the request
+    let apiRoute = `${API_BASE_URL}/${API_ENDPOINTS.exportVendors}`;
     //Making the request.
     const reponse = await get(apiRoute, token);
     //Returning the response recieved from the API

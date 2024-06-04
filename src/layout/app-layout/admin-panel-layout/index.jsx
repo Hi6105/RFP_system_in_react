@@ -6,6 +6,7 @@ import { APP_ROUTES } from "../../../config/AppConfig";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { setToken, setUser } from "../../../redux/slices/auth";
+import { USER_TYPE } from "../../../constants";
 const { Header, Sider } = Layout;
 
 const AdminPanelLayout = () => {
@@ -40,6 +41,14 @@ const AdminPanelLayout = () => {
       label: t("sidebar.categories"),
     },
   ];
+
+  if (user?.type == USER_TYPE?.ADMIN || user.type === "Super Admin") {
+    items.push({
+      key: APP_ROUTES?.auditLogs,
+      icon: React.createElement(UserOutlined),
+      label: t("sidebar.auditLogs"),
+    });
+  }
 
   const {
     token: { colorBgContainer },

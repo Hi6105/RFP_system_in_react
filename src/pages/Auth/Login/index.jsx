@@ -59,7 +59,10 @@ const Login = () => {
         })
       );
       // Navigate to admin dashboard route
-      if (response?.data?.type === "admin")
+      if (
+        response?.data?.type === "Admin" ||
+        response?.data?.type === "Super Admin"
+      )
         navigate(APP_ROUTES?.adminDashboard);
       else navigate(APP_ROUTES?.vendorDashboard);
     } else {

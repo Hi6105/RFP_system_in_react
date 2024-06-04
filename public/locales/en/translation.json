@@ -4,7 +4,8 @@
     "categories": "Categories",
     "vendors": "Vendors",
     "rfpList": "RFP List",
-    "rfpForQuote": "RFP For Quotes"
+    "rfpForQuote": "RFP For Quotes",
+    "auditLogs" : "Audit Logs"
   },
   "app": {
     "welcome": "Welcome",
@@ -54,6 +55,11 @@
     "totalPrice" : "Total Price",
     "rfpQuotes" : "RFP Quotes",
     "applyRfp" : "Apply RFP",
-    "itemPrice" : "Item Price"
+    "itemPrice" : "Item Price",
+    "userName" : "User Name",
+    "userType" : "User Type",
+    "ipAddress" : "IP Address",
+    "pageRequestParameter" : "Page Request Parameters",
+    "createdAt" : "Created At"
   }
 }

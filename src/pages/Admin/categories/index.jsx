@@ -1,12 +1,48 @@
 import React, { useEffect, useState } from "react";
 import { Content } from "antd/es/layout/layout";
-import { Flex, Table, Tag, Button, Spin, Space } from "antd";
+import { Flex, Table, Tag, Button, Spin, Space, Upload, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { APP_ROUTES } from "../../../config/AppConfig";
+import {
+  API_BASE_URL,
+  API_ENDPOINTS,
+  APP_ROUTES,
+} from "../../../config/AppConfig";
 import { fetchCategories } from "../../../helper/Fetchdata";
 import { useTranslation } from "react-i18next";
 import { PAGES } from "../../../constants";
 import { t } from "i18next";
+import { UploadOutlined } from "@ant-design/icons";
+
+const props = {
+  name: "file",
+  action: `${API_BASE_URL}/${API_ENDPOINTS?.uploadCategory}`,
+  headers: {
+    authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
+  onChange(info) {
+    if (info.file.status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === "done") {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+  beforeUpload: (file) => {
+    return new Promise((resolve, reject) => {
+      if (
+        !file.type.includes(
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+      ) {
+        message.error("Invalid file type! Please upload an XLSX file.");
+        reject("Invalid file type"); // Reject the upload if file type is not valid
+      }
+      resolve(true); // Allow upload if file type is valid
+    });
+  },
+};
 
 // Defining the configuration for the columns of the category table.
 const columns = [
@@ -108,9 +144,14 @@ const AdminCategories = () => {
             align="center"
           >
             <h4>{t("sidebar.categories")}</h4>
-            <Button type="primary" onClick={handleAddCategory}>
-              {t("app.addCategory")}
-            </Button>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <Button type="primary" onClick={handleAddCategory}>
+                {t("app.addCategory")}
+              </Button>
+              <Upload {...props}>
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
+            </div>
           </Flex>
           <Spin tip="Loading..." spinning={spinning}>
             <Table columns={columns} dataSource={categories} />

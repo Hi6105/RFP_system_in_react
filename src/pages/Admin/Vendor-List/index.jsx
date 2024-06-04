@@ -8,6 +8,7 @@ import { error, success } from "../../../helper/ToastMessages";
 import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "../../../config/AppConfig";
 import { Link } from "react-router-dom";
+import { CSVLink } from "react-csv";
 
 const fetchVendors = async () => {
   try {
@@ -138,6 +139,34 @@ const VendorList = () => {
     window.location.reload();
   };
 
+  // function to export vendors data into a csv format
+  const handleDownloadCSV = async () => {
+    // fetching the csv formatted data from the API
+    const response = await VendorServices.exportVendors();
+
+    //If the response from the API is OK appending the data into a csv file and triggering download.
+    if (response?.statusText == "OK" && response?.data) {
+      const csvData = response.data;
+
+      // Create a Blob object with the CSV data
+      const blob = new Blob([csvData], { type: "text/csv;charset=utf-8" });
+
+      // Trigger download using a temporary link
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "vendor_list.csv";
+      link.click();
+
+      // Revoke the temporary link
+      URL.revokeObjectURL(link.href);
+
+      return null;
+    } else {
+      error(MESSAGE?.downloadFailed, messageApi);
+      return null;
+    }
+  };
+
   return (
     <>
       {contextHolder}
@@ -168,7 +197,18 @@ const VendorList = () => {
             borderRadius: "10px",
           }}
         >
-          <h4 style={{ margin: "10px" }}>{t("sidebar.vendors")}</h4>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h4 style={{ margin: "10px" }}>{t("sidebar.vendors")}</h4>
+            <Button type="primary" onClick={handleDownloadCSV}>
+              Download
+            </Button>
+          </div>
           <Spin tip="Loading..." spinning={spinning}>
             <Table columns={columns} dataSource={vendors} />
           </Spin>

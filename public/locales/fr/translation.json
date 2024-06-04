@@ -4,7 +4,8 @@
     "categories": "Catégories",
     "vendors": "Vendeurs",
     "rfpList" : "Liste RFP",
-    "rfpForQuote" : "Pour les devis RFP"
+    "rfpForQuote" : "Pour les devis RFP",
+    "auditLogs" : "Journaux d'audit"
   },
   "app": {
     "welcome": "Bienvenu",
@@ -54,6 +55,11 @@
     "totalPrice" : "Prix ​​total",
     "rfpQuotes" : "Citations RFP",
     "applyRfp" : "Appliquer RFP",
-    "itemPrice" : "Prix ​​de l'article"
+    "itemPrice" : "Prix ​​de l'article",
+    "userName" : "Nom d'utilisateur",
+    "userType" : "Type d'utilisateur",
+    "idAddress" : "Adresse IP",
+    "pageRequestParameter" : "Paramètres de demande de page",
+    "createdAt" : "Créé à"
   }
 }

@@ -1,4 +1,4 @@
-export const API_BASE_URL = "https://rfpdemo.velsof.com/api";
+export const API_BASE_URL = "http://142.93.223.36:3000/api";
 
 export const API_ENDPOINTS = {
     login : "login",
@@ -15,9 +15,14 @@ export const API_ENDPOINTS = {
     getQuotes : "rfp/quotes",
     getRfpByUserId : "rfp/getrfp",
     applyRfp : "rfp/apply",
+    exportVendors : "exportVendors",
+    uploadCategory : "uploadCategoriesViaCsv",
+    auditLogs : "fetchLogs",
+    getActiveCompanies : "getActiveCompanies"
 };
 
 export const APP_ROUTES = {
+    auditLogs : "/auditLogs",
     login : "/login",
     vendorSignup : "/vendorSignup",
     adminSignup : "/adminSignup",

@@ -61,6 +61,7 @@ export const MESSAGE = {
     otpSent : "An OTP has been sent on your E-Mail address",
     passwordReset : "Your Password is successfully changed!",
     notArrayType : "Input should be an array",
+    downloadFailed : "Downloading failed"
 };
 
 //redirection links on pages
@@ -73,12 +74,13 @@ export const PAGES = {
   category : "Categories",
   addCategory : "Add Category",
   applyRfp : "Apply RFP",
+  auditLogs : "Audit Logs",
 }
 
 // User Type Constants
 export const USER_TYPE = {
-  ADMIN: "admin",
-  VENDOR: "vendor",
+  ADMIN: "Admin",
+  VENDOR: "Vendor",
 };
 
 // Regular Expressions for patter matching and validation
